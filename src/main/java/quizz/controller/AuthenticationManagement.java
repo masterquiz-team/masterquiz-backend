@@ -24,14 +24,12 @@ public class AuthenticationManagement {
     private final RegistrationService registrationService;
 
     @PostMapping("/login")
-    @Operation(tags = "Log in a user", description = "Login a user and return a token")
     public LoginDto login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         return authenticationService.authenticate(loginRequestDto);
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(tags = "Register a user", description = "Register a user and return dto")
     public UserResponseDto register(@Valid @RequestBody UserRequestDto userRequestDto) {
         return registrationService.register(userRequestDto);
     }
