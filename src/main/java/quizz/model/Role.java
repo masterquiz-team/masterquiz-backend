@@ -1,5 +1,6 @@
 package quizz.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -19,9 +20,8 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String roleName;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
 
     @Override
     public boolean equals(Object o) {
