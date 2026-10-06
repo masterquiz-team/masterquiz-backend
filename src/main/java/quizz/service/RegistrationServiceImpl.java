@@ -10,14 +10,13 @@ import quizz.exception.RegisterException;
 import quizz.mapper.UserRegistrationMapper;
 import quizz.model.Role;
 import quizz.model.User;
-import quizz.repository.RoleRepository;
 import quizz.repository.UserRepository;
+import quizz.service.interfaces.RegistrationService;
 
 @Service
 @RequiredArgsConstructor
-public class RegistrationService {
+public class RegistrationServiceImpl implements RegistrationService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRegistrationMapper userMapper;
 
@@ -27,14 +26,8 @@ public class RegistrationService {
         }
         User user = userMapper.toModel(userRequestDto);
         user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
-        user.setRole(new ArrayList<>());
-        Role role = new Role();
-        role.setRoleName("User");
-        Role savedRole = new Role();
-        if (roleRepository.findByRoleName(role.getRoleName()).isEmpty()) {
-            savedRole = roleRepository.save(role);
-        }
-        user.getRole().add(savedRole);
+        user.setRoles(new ArrayList<>());
+        user.getRoles().add(Role.USER);
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }

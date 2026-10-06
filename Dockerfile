@@ -8,15 +8,10 @@ RUN ./mvnw dependency:go-offline
 COPY src/ src/
 RUN ./mvnw clean package -DskipTests
 
-RUN java -Djarmode=layertools -jar target/*.jar extract --destination extracted
-
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /application
 
-COPY --from=builder /app/extracted/dependencies/ ./
-COPY --from=builder /app/extracted/spring-boot-loader/ ./
-COPY --from=builder /app/extracted/snapshot-dependencies/ ./
-COPY --from=builder /app/extracted/application/ ./
+COPY --from=builder /app/target/*.jar app.jar
 
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
 EXPOSE 8080
