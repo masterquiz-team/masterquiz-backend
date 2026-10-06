@@ -31,7 +31,7 @@ public class User implements UserDetails {
     private String nickname;
     @Column(nullable = false)
     private String password;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Role> role;
 
     @Override

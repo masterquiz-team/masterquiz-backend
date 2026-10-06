@@ -1,5 +1,6 @@
-package quizz.config;
+package quizz.service;
 
+import quizz.config.JwtUtil;
 import quizz.dto.auth.LoginDto;
 import quizz.dto.auth.LoginRequestDto;
 import quizz.exception.LoginException;
