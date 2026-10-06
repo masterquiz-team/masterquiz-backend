@@ -12,10 +12,11 @@ import quizz.model.Role;
 import quizz.model.User;
 import quizz.repository.RoleRepository;
 import quizz.repository.UserRepository;
+import quizz.service.interfaces.RegistrationService;
 
 @Service
 @RequiredArgsConstructor
-public class RegistrationService {
+public class RegistrationServiceImpl implements RegistrationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
