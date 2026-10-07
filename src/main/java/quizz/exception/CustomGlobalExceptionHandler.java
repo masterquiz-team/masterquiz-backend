@@ -1,13 +1,14 @@
 package quizz.exception;
 
 
-import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
+import java.util.ArrayList;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,43 +27,46 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Instant.now(),
                 "Invalid argument",
-                400);
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+                status.value(),
+                new ArrayList<>(ex.getBindingResult().getAllErrors().stream()
+                .map(ObjectError::getDefaultMessage).toList()));
+
+        return new ResponseEntity<>(exceptionResponse, status);
     }
 
     @ExceptionHandler(LoginException.class)
-    public ResponseEntity<Object> handleLoginException(String message) {
+    public ResponseEntity<Object> handleLoginException(LoginException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Instant.now(),
-                message,
-                401);
+                ex.getMessage(),
+                HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(RegisterException.class)
-    public ResponseEntity<Object> handleRegisterException(String message) {
+    public ResponseEntity<Object> handleRegisterException(RegisterException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Instant.now(),
-                message,
-                409);
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(EntityFoundException.class)
-    public ResponseEntity<Object> handleEntityFoundException(String message) {
+    public ResponseEntity<Object> handleEntityFoundException(EntityNotFoundException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Instant.now(),
-                message,
-                409);
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleEntityNotFoundException(String message) {
+    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Instant.now(),
-                message,
-                404);
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 }
