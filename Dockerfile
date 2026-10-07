@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY .mvn/ .mvn
 COPY mvnw pom.xml checkstyle.xml ./
-RUN ./mvnw dependency:go-offline
+RUN chmod +x mvnw && ./mvnw dependency:go-offline
 
 COPY src/ src/
 RUN ./mvnw clean package -DskipTests
@@ -13,5 +13,5 @@ WORKDIR /application
 
 COPY --from=builder /app/target/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
 EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
