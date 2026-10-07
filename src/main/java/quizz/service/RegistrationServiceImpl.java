@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.register.UserRequestDto;
 import quizz.dto.register.UserResponseDto;
 import quizz.exception.RegisterException;
@@ -20,6 +21,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final PasswordEncoder passwordEncoder;
     private final UserRegistrationMapper userMapper;
 
+    @Transactional
     public UserResponseDto register(UserRequestDto userRequestDto) {
         if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
             throw new RegisterException("User with this email already exist.");

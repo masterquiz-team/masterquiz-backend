@@ -1,6 +1,7 @@
 package quizz.exception;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
@@ -45,5 +46,23 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 message,
                 409);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EntityFoundException.class)
+    public ResponseEntity<Object> handleEntityFoundException(String message) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Instant.now(),
+                message,
+                409);
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleEntityNotFoundException(String message) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Instant.now(),
+                message,
+                404);
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 }
