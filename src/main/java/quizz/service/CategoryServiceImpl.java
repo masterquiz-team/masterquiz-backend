@@ -1,6 +1,5 @@
 package quizz.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +9,7 @@ import quizz.dto.category.CategoryDto;
 import quizz.dto.category.CategoryRequestDto;
 import quizz.dto.category.CategoryUpdateDto;
 import quizz.exception.EntityFoundException;
+import quizz.exception.EntityNotFoundException;
 import quizz.mapper.CategoryMapper;
 import quizz.model.Category;
 import quizz.repository.CategoryRepository;
@@ -24,9 +24,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto createCategory(CategoryRequestDto categoryRequestDto) {
-        Category category = categoryRepository.findByName(categoryRequestDto.name()).orElseThrow(
-                () -> new EntityFoundException("Category with name: "
-                        + categoryRequestDto.name() + " already exist"));
+        if (categoryRepository.findByName(categoryRequestDto.name()).isPresent()) {
+            throw new EntityFoundException(
+                    "Category with name: " + categoryRequestDto.name() + " already exists");
+        }
+        Category category = categoryMapper.toModel(categoryRequestDto);
         Category savedCategory = categoryRepository.save(category);
         return categoryMapper.toDto(savedCategory);
     }
@@ -46,20 +48,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto updateCategory(CategoryUpdateDto categoryUpdateDto) {
-        Category category = categoryRepository.findById(categoryUpdateDto.id()).orElseThrow(
-                () -> new EntityNotFoundException("Category with id: " + categoryUpdateDto.id()
-                        + " doesn't exist"));
+        Category category = findById(categoryUpdateDto.id());
         category.setName(categoryUpdateDto.name());
         return categoryMapper.toDto(category);
     }
 
     @Transactional
     @Override
-    public CategoryDto deleteCategory(Long id) {
-        Category category = findById(id);
-        CategoryDto categoryDto = categoryMapper.toDto(category);
-        categoryRepository.delete(category);
-        return categoryDto;
+    public void deleteCategory(Long id) {
+        categoryRepository.delete(findById(id));
     }
 
     private Category findById(Long id) {

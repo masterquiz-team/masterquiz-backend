@@ -31,7 +31,7 @@ public class CategoryController {
 
     @PostMapping
     @Operation(summary = "Create category", description = "Endpoint to create categories")
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(@Valid @RequestBody CategoryRequestDto categoryRequestDto) {
        return categoryService.createCategory(categoryRequestDto);
@@ -39,7 +39,7 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a category", description = "Endpoint to get single category")
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasRole('USER')")
     public CategoryDto getCategory(@PathVariable Long id) {
         return categoryService.getCategory(id);
     }
@@ -47,23 +47,23 @@ public class CategoryController {
     @GetMapping
     @Operation(summary = "Get page of categories",
             description = "Endpoint to get page of categories")
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasRole('USER')")
     public Page<CategoryDto> getPageOfCategories(Pageable pageable) {
         return categoryService.getPageOfCategories(pageable);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update category", description = "Endpoint to update a category")
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasRole('USER')")
     public CategoryDto updateCategory(@Valid @RequestBody CategoryUpdateDto categoryUpdateDto) {
         return categoryService.updateCategory(categoryUpdateDto);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete category", description = "Endpoint to delete a category")
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public CategoryDto deleteCategory(@PathVariable Long id) {
-        return categoryService.deleteCategory(id);
+    public void deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
     }
 }
