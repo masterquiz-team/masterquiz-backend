@@ -24,7 +24,11 @@ public class Question {
     @Column(nullable = false)
     private String text;
     @Column(nullable = false)
-    private String Feedback;
+    private String feedback;
+    @Column(nullable = false)
+    private int answerCounter = 0;
+    @Column(nullable = false)
+    private boolean isCorrectAnswer = false;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

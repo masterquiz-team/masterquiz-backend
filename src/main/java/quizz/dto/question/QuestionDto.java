@@ -8,5 +8,7 @@ public class QuestionDto {
     private Long id;
     private String text;
     private String feedback;
+    private int answerCounter;
+    private boolean isCorrectAnswer;
     private Category category;
 }
