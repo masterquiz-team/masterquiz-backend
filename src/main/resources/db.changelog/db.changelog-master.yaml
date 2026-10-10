@@ -3,3 +3,7 @@ databaseChangeLog:
       file: db.changelog/changes/01-create-user-table-and-roles.yaml
   - include:
       file: db.changelog/changes/02-create-category-table.yaml
+  - include:
+      file: db.changelog/changes/03-create-question-table.yaml
+  - include:
+      file: db.changelog/changes/04-create-answer-table.yaml

@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-create-question-table
+      author: PatrykWski
+      changes:
+        - createTable:
+            tableName: questions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: text
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feedback
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: answer_counter
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_correct_answer
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_question_category
+                    referencedTableName: categories
+                    referencedColumnNames: id
