@@ -1,6 +1,5 @@
 package quizz.exception;
 
-
 import java.time.Instant;
 import java.util.ArrayList;
 import org.jspecify.annotations.Nullable;
@@ -29,7 +28,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 "Invalid argument",
                 status.value(),
                 new ArrayList<>(ex.getBindingResult().getAllErrors().stream()
-                .map(ObjectError::getDefaultMessage).toList()));
+                        .map(ObjectError::getDefaultMessage).toList()));
 
         return new ResponseEntity<>(exceptionResponse, status);
     }

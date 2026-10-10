@@ -34,7 +34,7 @@ public class CategoryController {
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(@Valid @RequestBody CategoryRequestDto categoryRequestDto) {
-       return categoryService.createCategory(categoryRequestDto);
+        return categoryService.createCategory(categoryRequestDto);
     }
 
     @GetMapping("/{id}")

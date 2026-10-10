@@ -44,7 +44,8 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional(readOnly = true)
     public List<QuestionDto> getAllQuestionsByCategory(String categoryName) {
         if (categoryRepository.findByName(categoryName).isEmpty()) {
-            throw new EntityNotFoundException("Category with name: " + categoryName + " doesn't exist");
+            throw new EntityNotFoundException("Category with name: "
+                    + categoryName + " doesn't exist");
         }
         return questionRepository.findAll().stream()
                 .filter(question -> question.getCategory().getName().equals(categoryName))
