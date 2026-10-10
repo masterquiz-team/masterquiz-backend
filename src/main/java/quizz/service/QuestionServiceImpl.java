@@ -27,7 +27,9 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public QuestionDto createQuestion(QuestionRequestDto dto) {
         findByText(dto.getText());
+        Category category = findByCategoryId(dto.getCategoryId());
         Question question = mapper.toModel(dto);
+        question.setCategory(category);
         Question savedQuestion = questionRepository.save(question);
         return mapper.toDto(savedQuestion);
     }
@@ -54,6 +56,8 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public QuestionDto updateQuestion(UpdateQuestionDto dto) {
         Question question = findById(dto.getId());
+        Category category = findByCategoryId(dto.getCategoryId());
+        question.setCategory(category);
         mapper.update(dto, question);
         return mapper.toDto(question);
     }
@@ -66,13 +70,19 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     private void findByText(String text) {
-         if (questionRepository.findByText(text).isPresent()) {
-             throw new EntityFoundException("Question with id: " + text + " already exist");
-         }
+        if (questionRepository.findByText(text).isPresent()) {
+            throw new EntityFoundException("Question with id: " + text + " already exist");
+        }
     }
 
     private Question findById(Long id) {
         return questionRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Question with id: " + id + " doesn't exist"));
+    }
+
+    private Category findByCategoryId(Long id) {
+        return categoryRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Category with id: "
+                        + id + " doesn't exist"));
     }
 }
