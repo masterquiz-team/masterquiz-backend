@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.answer.AnswerDto;
 import quizz.dto.answer.AnswerRequestDto;
-import quizz.dto.answer.UpdateRequestDto;
+import quizz.dto.answer.UpdateAnswerDto;
 import quizz.exception.AnswerLimitExceededException;
 import quizz.exception.CorrectAnswerAlreadyExistException;
 import quizz.exception.EntityNotFoundException;
@@ -68,18 +68,18 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional
-    public AnswerDto updateAnswer(UpdateRequestDto updateRequestDto) {
-        Answer answer = findById(updateRequestDto.getId());
+    public AnswerDto updateAnswer(UpdateAnswerDto updateAnswerDto) {
+        Answer answer = findById(updateAnswerDto.getId());
         Question question = answer.getQuestion();
 
-        if (!answer.isCorrect() && updateRequestDto.isCorrect()
+        if (!answer.isCorrect() && updateAnswerDto.isCorrect()
                 && question.isCorrectAnswer()) {
             throw new CorrectAnswerAlreadyExistException(
                     "Only one answer can be correct");
         }
         boolean wasCorrect = answer.isCorrect();
 
-        answerMapper.updateAnswer(updateRequestDto, answer);
+        answerMapper.updateAnswer(updateAnswerDto, answer);
 
         if (wasCorrect != answer.isCorrect()) {
             question.setCorrectAnswer(answer.isCorrect());

@@ -6,7 +6,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import quizz.dto.answer.AnswerDto;
 import quizz.dto.answer.AnswerRequestDto;
-import quizz.dto.answer.UpdateRequestDto;
+import quizz.dto.answer.UpdateAnswerDto;
 import quizz.model.Answer;
 
 @Mapper(componentModel = "spring")
@@ -16,5 +16,5 @@ public interface AnswerMapper {
     AnswerDto toDto(Answer answer);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateAnswer(UpdateRequestDto updateRequestDto, @MappingTarget Answer answer);
+    void updateAnswer(UpdateAnswerDto updateAnswerDto, @MappingTarget Answer answer);
 }

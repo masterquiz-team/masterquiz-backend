@@ -3,7 +3,7 @@ package quizz.service.interfaces;
 import java.util.List;
 import quizz.dto.answer.AnswerDto;
 import quizz.dto.answer.AnswerRequestDto;
-import quizz.dto.answer.UpdateRequestDto;
+import quizz.dto.answer.UpdateAnswerDto;
 
 public interface AnswerService {
     AnswerDto createAnswer(AnswerRequestDto answerRequestDto);
@@ -12,7 +12,7 @@ public interface AnswerService {
 
     List<AnswerDto> getAnswersByQuestionId(Long id);
 
-    AnswerDto updateAnswer(UpdateRequestDto updateRequestDto);
+    AnswerDto updateAnswer(UpdateAnswerDto updateAnswerDto);
 
     void deleteAnswer(Long id);
 }
