@@ -14,32 +14,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "questions")
 @Getter
 @Setter
-public class Question {
+@Table(name = "answers")
+public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String text;
     @Column(nullable = false)
-    private String feedback;
-    @Column(nullable = false)
-    private int answerCounter = 0;
-    @Column(nullable = false)
-    private boolean isCorrectAnswer = false;
+    private boolean correct;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Question question = (Question) o;
-        return Objects.equals(id, question.id);
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id);
     }
 
     @Override

@@ -69,4 +69,34 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(QuestionAnswerCounterException.class)
+    public ResponseEntity<Object> handleQuestionCounterException(
+            QuestionAnswerCounterException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Instant.now(),
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AnswerLimitExceededException.class)
+    public ResponseEntity<Object> handleAnswerLimitExceededException(
+            AnswerLimitExceededException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Instant.now(),
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CorrectAnswerAlreadyExistException.class)
+    public ResponseEntity<Object> handleCorrectAnswerAlreadyExistException(
+            CorrectAnswerAlreadyExistException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Instant.now(),
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }
