@@ -24,10 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto createCategory(CategoryRequestDto categoryRequestDto) {
-        if (categoryRepository.findByName(categoryRequestDto.name()).isPresent()) {
-            throw new EntityFoundException(
-                    "Category with name: " + categoryRequestDto.name() + " already exists");
-        }
+        doesExist(categoryRequestDto.name());
         Category category = categoryMapper.toModel(categoryRequestDto);
         Category savedCategory = categoryRepository.save(category);
         return categoryMapper.toDto(savedCategory);
@@ -49,6 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto updateCategory(CategoryUpdateDto categoryUpdateDto) {
         Category category = findById(categoryUpdateDto.id());
+        checkNameAvailability(categoryUpdateDto);
         category.setName(categoryUpdateDto.name());
         return categoryMapper.toDto(category);
     }
@@ -62,5 +60,18 @@ public class CategoryServiceImpl implements CategoryService {
     private Category findById(Long id) {
         return categoryRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Category with id: " + id + " doesn't exist"));
+    }
+
+    private void doesExist(String name) {
+        if (categoryRepository.findByName(name).isPresent()) {
+            throw new EntityFoundException("Category with name: " + name + " already exist");
+        }
+    }
+
+    private void checkNameAvailability(CategoryUpdateDto dto) {
+        if (categoryRepository.findByNameAndIdNot(dto.name(), dto.id()).isPresent()) {
+            throw new EntityFoundException(
+                    "Category with name: " + dto.name() + " already exists");
+        }
     }
 }
