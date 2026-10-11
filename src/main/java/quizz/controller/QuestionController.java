@@ -32,28 +32,28 @@ public class QuestionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Create new question", description = "Endpoint for creating a question")
+    @Operation(summary = "Create new question", description = "Endpoint to create a question")
     QuestionDto createQuestion(@Valid @RequestBody QuestionRequestDto questionRequestDto) {
         return questionService.createQuestion(questionRequestDto);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER)")
-    @Operation(summary = "Get a question", description = "Get a question by id")
+    @Operation(summary = "Get a question", description = "Endpoint to get a question by id")
     QuestionDto getQuestion(@PathVariable Long id) {
         return questionService.getQuestion(id);
     }
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Get list of questions", description = "Get list of questions")
+    @Operation(summary = "Get list of questions", description = "Endpoint to get list of questions")
     List<QuestionDto> getListOfQuestions(@RequestParam String categoryName) {
         return questionService.getAllQuestionsByCategory(categoryName);
     }
 
     @PutMapping
     @PreAuthorize("hasRole('USER)")
-    @Operation(summary = "Update a question", description = "Update a question by values")
+    @Operation(summary = "Update a question", description = "Endpoint to update question")
     QuestionDto updateAQuestion(@RequestBody UpdateQuestionDto updateQuestionDto) {
         return questionService.updateQuestion(updateQuestionDto);
     }
@@ -61,7 +61,7 @@ public class QuestionController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete a question", description = "Delete a question")
+    @Operation(summary = "Delete a question", description = "Endpoint to delete question")
     void deleteQuestion(@PathVariable Long id) {
         questionService.deleteQuestion(id);
     }

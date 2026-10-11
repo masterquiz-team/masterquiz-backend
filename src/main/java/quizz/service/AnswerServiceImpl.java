@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.answer.AnswerDto;
+import quizz.dto.answer.AnswerDtoWithoutCorrectFieldDto;
 import quizz.dto.answer.AnswerRequestDto;
 import quizz.dto.answer.UpdateAnswerDto;
 import quizz.exception.AnswerLimitExceededException;
@@ -63,6 +64,15 @@ public class AnswerServiceImpl implements AnswerService {
     public List<AnswerDto> getAnswersByQuestionId(Long id) {
         return answerRepository.findByQuestionId(id).stream()
                 .map(answerMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AnswerDtoWithoutCorrectFieldDto> getAnswersByQuestionIdWithoutCorrectField(
+            Long id) {
+        return answerRepository.findByQuestionId(id).stream()
+                .map(answerMapper::toDtoWithoutCorrectField)
                 .toList();
     }
 

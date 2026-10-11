@@ -38,7 +38,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get a category", description = "Endpoint to get single category")
+    @Operation(summary = "Get a category", description = "Endpoint to get category by id")
     @PreAuthorize("hasRole('USER')")
     public CategoryDto getCategory(@PathVariable Long id) {
         return categoryService.getCategory(id);

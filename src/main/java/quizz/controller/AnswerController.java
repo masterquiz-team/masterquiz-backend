@@ -31,35 +31,44 @@ public class AnswerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Create an answer", description = "Create an answer")
+    @Operation(summary = "Create an answer", description = "Endpoint to create an answer")
     AnswerDto createAnswer(@RequestBody @Valid AnswerRequestDto answerRequestDto) {
         return answerService.createAnswer(answerRequestDto);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Get an answer by id", description = "Get an answer by id")
+    @Operation(summary = "Get an answer by id", description = "Endpoint to get an answer by id")
     AnswerDto getAnswer(@PathVariable Long id) {
         return answerService.getAnswer(id);
     }
 
     @GetMapping("/question/{questionId}")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Get list of answers", description = "Get list of answers by question id")
+    @Operation(summary = "Get list of answers",
+            description = "Endpoint to get list of answers by question id")
     List<AnswerDto> getAnswersByQuestionId(@PathVariable Long questionId) {
+        return answerService.getAnswersByQuestionId(questionId);
+    }
+
+    @GetMapping("/question/{questionId}/quiz")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Get list of answers",
+            description = "Endpoint to get list of answers by question id without correct field")
+    List<AnswerDto> getAnswersByQuestionIdWithoutCorrectField(@PathVariable Long questionId) {
         return answerService.getAnswersByQuestionId(questionId);
     }
 
     @PutMapping
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Update answer", description = "Update answer")
+    @Operation(summary = "Update answer", description = "Endpoint to update answer")
     AnswerDto updateAnswer(@RequestBody UpdateAnswerDto answerDto) {
         return answerService.updateAnswer(answerDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete answer", description = "Delete answer")
+    @Operation(summary = "Delete answer", description = "Endpoint to delete answer")
     @PreAuthorize("hasRole('USER')")
     void deleteAnswer(@PathVariable Long id) {
         answerService.deleteAnswer(id);

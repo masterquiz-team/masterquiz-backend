@@ -32,21 +32,22 @@ public class QuizController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Create quiz", description = "Create quiz")
+    @Operation(summary = "Create quiz", description = "Endpoint to create quiz")
     public QuizDto createQuiz(@Valid @RequestBody QuizRequestDto quizRequestDto) {
         return quizService.createQuiz(quizRequestDto);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Get quiz", description = "Get quiz by id")
+    @Operation(summary = "Get quiz", description = "Endpoint to get quiz by id")
     public QuizDto getQuiz(@PathVariable Long id) {
         return quizService.getQuiz(id);
     }
 
     @GetMapping("/category/{categoryId}")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Get page of quizzes", description = "Get page of quiz by category id")
+    @Operation(summary = "Get page of quizzes",
+            description = "Endpoint to get page of quiz by category id")
     public Page<QuizDto> getPageOfQuizByCategory(@PathVariable Long categoryId,
                                                  Pageable pageable) {
         return quizService.getPageOfQuizByCategoryId(categoryId, pageable);
@@ -54,7 +55,7 @@ public class QuizController {
 
     @PutMapping
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Update quiz", description = "Update quiz")
+    @Operation(summary = "Update quiz", description = "Endpoint to update quiz")
     public QuizDto updateQuiz(@RequestBody UpdateQuizDto updateQuizDto) {
         return quizService.updateQuiz(updateQuizDto);
     }
@@ -62,7 +63,7 @@ public class QuizController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete quiz", description = "Delete quiz by id")
+    @Operation(summary = "Delete quiz", description = "Endpoint to delete quiz by id")
     public void deleteQuiz(@PathVariable Long id) {
         quizService.deleteQuiz(id);
     }
