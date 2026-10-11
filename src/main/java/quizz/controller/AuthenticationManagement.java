@@ -17,7 +17,7 @@ import quizz.service.interfaces.RegistrationService;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Authentication management", description = "Authentication management")
+@Tag(name = "Authentication Management", description = "Endpoints for authentication")
 public class AuthenticationManagement {
     private final AuthenticationService authenticationService;
     private final RegistrationService registrationService;
