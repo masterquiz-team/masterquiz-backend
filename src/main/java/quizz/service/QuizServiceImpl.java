@@ -11,7 +11,6 @@ import quizz.dto.quiz.QuizRequestDto;
 import quizz.dto.quiz.UpdateQuizDto;
 import quizz.exception.EntityNotFoundException;
 import quizz.exception.InvalidQuizQuestionCountException;
-import quizz.mapper.QuestionMapper;
 import quizz.mapper.QuizMapper;
 import quizz.model.Category;
 import quizz.model.Question;
@@ -28,7 +27,6 @@ public class QuizServiceImpl implements QuizService {
     private final CategoryRepository categoryRepository;
     private final QuestionRepository questionRepository;
     private final QuizMapper mapper;
-    private final QuestionMapper questionMapper;
 
     @Override
     @Transactional
