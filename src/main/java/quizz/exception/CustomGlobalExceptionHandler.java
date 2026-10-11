@@ -119,13 +119,23 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(QuizStatusFinishedException.class)
+    @ExceptionHandler(InvalidQuizAttemptStateException.class)
     public ResponseEntity<Object> handleQuizStatusInProgressException(
-            QuizStatusFinishedException ex) {
+            InvalidQuizAttemptStateException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(QuestionAlreadyAnsweredException.class)
+    public ResponseEntity<Object> handleQuestionAlreadyAnsweredException(
+            QuestionAlreadyAnsweredException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Instant.now(),
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 }

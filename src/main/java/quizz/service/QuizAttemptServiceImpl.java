@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.quizattempt.QuizAttemptDto;
 import quizz.dto.quizattempt.QuizAttemptRequestDto;
 import quizz.exception.EntityNotFoundException;
-import quizz.exception.QuizStatusFinishedException;
+import quizz.exception.InvalidQuizAttemptStateException;
 import quizz.exception.UnauthorizedAccessException;
 import quizz.mapper.QuizAttemptMapper;
 import quizz.model.Quiz;
@@ -71,7 +71,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
         checkIfHasPermission(quizAttempt.getUser(), user);
 
         if (!quizAttempt.getStatus().equals(Status.IN_PROGRESS)) {
-            throw new QuizStatusFinishedException("Quiz status is not in progress");
+            throw new InvalidQuizAttemptStateException("Quiz status is not in progress");
         }
         quizAttempt.setFinishedAt(LocalDateTime.now());
         quizAttempt.setStatus(Status.FINISHED);
