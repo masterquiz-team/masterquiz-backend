@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db.changelog/changes/06-create-quiz-question-table.yaml
   - include:
       file: db.changelog/changes/07-create-quiz-attempt-table.yaml
+  - include:
+      file: db.changelog/changes/08-create-answer-attempt-table.yaml
