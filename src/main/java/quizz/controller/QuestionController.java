@@ -25,7 +25,7 @@ import quizz.service.interfaces.QuestionService;
 @RestController
 @RequestMapping("/questions")
 @RequiredArgsConstructor
-@Tag(name = "Question management", description = "Endpoints for question management")
+@Tag(name = "Question Management", description = "Endpoints for questions")
 public class QuestionController {
     private final QuestionService questionService;
 

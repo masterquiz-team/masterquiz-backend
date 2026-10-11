@@ -25,7 +25,7 @@ import quizz.service.interfaces.CategoryService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/categories")
-@Tag(name = "Category Management", description = "Category management for categories")
+@Tag(name = "Category Management", description = "Endpoints for categories")
 public class CategoryController {
     private final CategoryService categoryService;
 
