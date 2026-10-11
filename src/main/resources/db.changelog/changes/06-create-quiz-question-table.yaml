@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 06-create-quiz-question-table
+      author: PatrykWski
+      changes:
+        - createTable:
+            tableName: quiz_questions
+            columns:
+              - column:
+                  name: quiz_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: question_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: quiz_questions
+            columnNames: quiz_id, question_id
+            constraintName: pk_quiz_questions
+
+        - addForeignKeyConstraint:
+            baseTableName: quiz_questions
+            baseColumnNames: quiz_id
+            referencedTableName: quizzes
+            referencedColumnNames: id
+            constraintName: fk_quiz_questions_quiz
+
+        - addForeignKeyConstraint:
+            baseTableName: quiz_questions
+            baseColumnNames: question_id
+            referencedTableName: questions
+            referencedColumnNames: id
+            constraintName: fk_quiz_questions_question
