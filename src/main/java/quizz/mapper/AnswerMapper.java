@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import quizz.dto.answer.AnswerDto;
+import quizz.dto.answer.AnswerDtoWithoutCorrectFieldDto;
 import quizz.dto.answer.AnswerRequestDto;
 import quizz.dto.answer.UpdateAnswerDto;
 import quizz.model.Answer;
@@ -16,6 +17,9 @@ public interface AnswerMapper {
 
     @Mapping(source = "question.id", target = "questionId")
     AnswerDto toDto(Answer answer);
+
+    @Mapping(source = "question.id", target = "questionId")
+    AnswerDtoWithoutCorrectFieldDto toDtoWithoutCorrectField(Answer answer);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateAnswer(UpdateAnswerDto updateAnswerDto, @MappingTarget Answer answer);
