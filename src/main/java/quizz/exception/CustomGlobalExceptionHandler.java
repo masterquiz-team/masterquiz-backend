@@ -108,4 +108,24 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<Object> handleUnauthorizedAccessException(
+            UnauthorizedAccessException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Instant.now(),
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(QuizStatusFinishedException.class)
+    public ResponseEntity<Object> handleQuizStatusInProgressException(
+            QuizStatusFinishedException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Instant.now(),
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }

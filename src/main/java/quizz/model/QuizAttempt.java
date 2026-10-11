@@ -32,7 +32,6 @@ public class QuizAttempt {
     private User user;
     @Column(nullable = false)
     private LocalDateTime startedAt;
-    @Column(nullable = false)
     private LocalDateTime finishedAt;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
