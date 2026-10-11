@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-create-answer-attempt-table
+      author: Patryk
+      changes:
+        - createTable:
+            tableName: answer_attempts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: quiz_attempt_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: answer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: correct_answer
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: answer_attempts
+            baseColumnNames: quiz_attempt_id
+            referencedTableName: quiz_attempts
+            referencedColumnNames: id
+            constraintName: fk_answer_attempts_quiz_attempt
+
+        - addForeignKeyConstraint:
+            baseTableName: answer_attempts
+            baseColumnNames: answer_id
+            referencedTableName: answers
+            referencedColumnNames: id
+            constraintName: fk_answer_attempts_answer
