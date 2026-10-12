@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class AnswerRequestDto {
     @NotBlank
-    @Size(min = 2, max = 10)
+    @Size(min = 2, max = 100)
     private String text;
     @NotNull
     private boolean correct;
