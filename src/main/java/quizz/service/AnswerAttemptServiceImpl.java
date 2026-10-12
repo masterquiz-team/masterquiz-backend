@@ -85,7 +85,6 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
             answersIds.add(answer.getId());
         }
 
-
         AnswerAttemptDto answerAttemptDto = answerAttemptMapper.toDto(savedAttempt);
         answerAttemptDto.setQuestionId(question.get().getId());
         answerAttemptDto.setFeedback(question.get().getFeedback());
