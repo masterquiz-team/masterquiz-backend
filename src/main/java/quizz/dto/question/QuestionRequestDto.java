@@ -8,10 +8,10 @@ import lombok.Data;
 @Data
 public class QuestionRequestDto {
     @NotBlank
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 100)
     private String text;
     @NotBlank
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 100)
     private String feedback;
     @NotNull
     private Long categoryId;
