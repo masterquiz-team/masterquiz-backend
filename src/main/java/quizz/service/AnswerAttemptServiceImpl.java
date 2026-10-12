@@ -101,7 +101,7 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
     }
 
     private void checkPermission(User quizAttemptUser, User user) {
-        if (!quizAttemptUser.equals(user)) {
+        if (!quizAttemptUser.getUsername().equals(user.getUsername())) {
             throw new UnauthorizedAccessException("You have no permission");
         }
     }
