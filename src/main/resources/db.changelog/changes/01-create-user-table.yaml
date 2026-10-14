@@ -25,6 +25,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: score
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
                   name: password
                   type: VARCHAR(255)
                   constraints:

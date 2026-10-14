@@ -8,4 +8,5 @@ public class UpdateQuestionDto {
     private String text;
     private String feedback;
     private Long categoryId;
+    private String difficultyName;
 }

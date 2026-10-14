@@ -36,6 +36,8 @@ public class User implements UserDetails {
     private String nickname;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private int score = 0;
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
