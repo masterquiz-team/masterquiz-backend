@@ -2,6 +2,8 @@ package quizz.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +27,9 @@ public class Question {
     private String text;
     @Column(nullable = false)
     private String feedback;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Difficulty difficulty;
     @Column(nullable = false)
     private int answerCounter = 0;
     @Column(nullable = false)

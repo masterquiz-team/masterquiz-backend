@@ -11,4 +11,5 @@ public class QuestionDto {
     private int answerCounter;
     private boolean isCorrectAnswer;
     private Category category;
+    private String difficultyName;
 }

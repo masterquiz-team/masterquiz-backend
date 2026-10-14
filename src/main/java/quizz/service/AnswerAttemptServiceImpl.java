@@ -83,6 +83,7 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
 
         if (answer.isCorrect()) {
             answersIds.add(answer.getId());
+            user.setScore(user.getScore() + question.get().getDifficulty().getPoints());
         }
 
         AnswerAttemptDto answerAttemptDto = answerAttemptMapper.toDto(savedAttempt);

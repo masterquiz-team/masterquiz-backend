@@ -15,4 +15,6 @@ public class QuestionRequestDto {
     private String feedback;
     @NotNull
     private Long categoryId;
+    @NotBlank
+    private String difficultyName;
 }
