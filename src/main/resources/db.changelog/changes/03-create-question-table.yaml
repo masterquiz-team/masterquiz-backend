@@ -36,7 +36,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: is_correct_answer
-                  type: BOOLEAN
+                  type: BIT
                   constraints:
                     nullable: false
               - column:

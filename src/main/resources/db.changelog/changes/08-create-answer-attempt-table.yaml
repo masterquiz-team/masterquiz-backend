@@ -28,7 +28,7 @@ databaseChangeLog:
 
               - column:
                   name: correct_answer
-                  type: BOOLEAN
+                  type: BIT
                   constraints:
                     nullable: false
 

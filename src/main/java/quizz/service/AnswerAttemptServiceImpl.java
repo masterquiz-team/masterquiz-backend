@@ -1,6 +1,5 @@
 package quizz.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -79,12 +78,16 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
         answerAttempt.setQuizAttempt(quizAttempt);
 
         AnswerAttempt savedAttempt = answerAttemptRepository.save(answerAttempt);
-        List<Long> answersIds = new ArrayList<>();
 
         if (answer.isCorrect()) {
-            answersIds.add(answer.getId());
             user.setScore(user.getScore() + question.get().getDifficulty().getPoints());
         }
+
+        List<Long> answersIds = answerRepository
+                .findByQuestionIdAndCorrectTrue(question.get().getId())
+                .stream()
+                .map(Answer::getId)
+                .toList();
 
         AnswerAttemptDto answerAttemptDto = answerAttemptMapper.toDto(savedAttempt);
         answerAttemptDto.setQuestionId(question.get().getId());
