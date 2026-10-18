@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.quizattempt.QuizAttemptDto;
-import quizz.dto.quizattempt.QuizAttemptRequestDto;
 import quizz.exception.EntityNotFoundException;
 import quizz.exception.InvalidQuizAttemptStateException;
 import quizz.exception.UnauthorizedAccessException;
@@ -29,11 +28,11 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
 
     @Override
     @Transactional
-    public QuizAttemptDto createQuizAttempt(QuizAttemptRequestDto quizAttemptRequestDto,
+    public QuizAttemptDto createQuizAttempt(Long quizId,
                                             String email) {
-        Quiz quiz = quizRepository.findById(quizAttemptRequestDto.getQuizId()).orElseThrow(
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        "Quiz with id: " + quizAttemptRequestDto.getQuizId() + " doesn't exist"));
+                        "Quiz with id: " + quizId + " doesn't exist"));
         User user = checkIfUserExist(email);
 
         QuizAttempt quizAttempt = new QuizAttempt();
