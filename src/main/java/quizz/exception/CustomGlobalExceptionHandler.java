@@ -52,7 +52,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(EntityFoundException.class)
-    public ResponseEntity<Object> handleEntityFoundException(EntityNotFoundException ex) {
+    public ResponseEntity<Object> handleEntityFoundException(EntityFoundException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Instant.now(),
                 ex.getMessage(),
