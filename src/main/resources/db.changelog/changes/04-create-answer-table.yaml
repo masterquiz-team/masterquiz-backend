@@ -20,7 +20,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: correct
-                  type: BOOLEAN
+                  type: BIT
                   constraints:
                     nullable: false
               - column:

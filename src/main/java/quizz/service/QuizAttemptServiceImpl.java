@@ -85,7 +85,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
     }
 
     private void checkIfHasPermission(User quizAttemptUser, User user) {
-        if (!quizAttemptUser.equals(user)) {
+        if (!quizAttemptUser.getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You have no permission");
         }
     }

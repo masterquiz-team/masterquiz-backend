@@ -8,4 +8,6 @@ import quizz.model.Answer;
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findByQuestionId(Long id);
+
+    List<Answer> findByQuestionIdAndCorrectTrue(Long id);
 }

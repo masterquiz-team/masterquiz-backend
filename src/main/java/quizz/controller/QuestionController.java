@@ -38,7 +38,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER)")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get a question", description = "Endpoint to get a question by id")
     QuestionDto getQuestion(@PathVariable Long id) {
         return questionService.getQuestion(id);
@@ -52,7 +52,7 @@ public class QuestionController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole('USER)")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Update a question", description = "Endpoint to update question")
     QuestionDto updateAQuestion(@RequestBody UpdateQuestionDto updateQuestionDto) {
         return questionService.updateQuestion(updateQuestionDto);
