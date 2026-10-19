@@ -47,6 +47,7 @@ public class AnswerServiceImpl implements AnswerService {
         }
         Answer answer = answerMapper.toModel(answerRequestDto);
         answer.setQuestion(question);
+        answer.setPoints(question.getDifficulty().getPoints());
         Answer savedAnswer = answerRepository.save(answer);
         question.setAnswerCounter(question.getAnswerCounter() + 1);
         return answerMapper.toDto(savedAnswer);

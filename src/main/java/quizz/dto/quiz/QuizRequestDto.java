@@ -11,6 +11,8 @@ import lombok.Data;
 public class QuizRequestDto {
     @NotBlank
     private String title;
+    @NotBlank
+    private String difficulty;
     @NotNull
     private Long categoryId;
     @NotEmpty

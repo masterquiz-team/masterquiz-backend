@@ -8,6 +8,7 @@ import quizz.dto.question.QuestionDto;
 public class QuizDto {
     private Long id;
     private String title;
+    private String difficulty;
     private Long categoryId;
     private List<QuestionDto> listOfQuestions;
 }
