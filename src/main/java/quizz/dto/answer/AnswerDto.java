@@ -8,4 +8,5 @@ public class AnswerDto {
     private String text;
     private boolean correct;
     private Long questionId;
+    private int points;
 }

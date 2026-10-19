@@ -7,4 +7,5 @@ public class AnswerDtoWithoutCorrectFieldDto {
     private Long id;
     private String text;
     private Long questionId;
+    private int points;
 }

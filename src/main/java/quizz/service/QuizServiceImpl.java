@@ -13,6 +13,7 @@ import quizz.exception.EntityNotFoundException;
 import quizz.exception.InvalidQuizQuestionCountException;
 import quizz.mapper.QuizMapper;
 import quizz.model.Category;
+import quizz.model.Difficulty;
 import quizz.model.Question;
 import quizz.model.Quiz;
 import quizz.repository.CategoryRepository;
@@ -31,7 +32,6 @@ public class QuizServiceImpl implements QuizService {
     @Override
     @Transactional
     public QuizDto createQuiz(QuizRequestDto quizRequestDto) {
-        Category category = findCategoryById(quizRequestDto.getCategoryId());
 
         findQuestionsById(quizRequestDto.getQuestionIds());
 
@@ -39,6 +39,15 @@ public class QuizServiceImpl implements QuizService {
                 .findAllById(quizRequestDto.getQuestionIds());
 
         sizeValidation(listOfQuestions.size());
+
+        boolean isValid = isEnumStringValid(quizRequestDto.getDifficulty());
+
+        if (!isValid) {
+            throw new EntityNotFoundException("Difficulty with name: "
+                    + quizRequestDto.getDifficulty() + " doesn't exist");
+        }
+
+        Category category = findCategoryById(quizRequestDto.getCategoryId());
 
         Quiz quiz = mapper.toModel(quizRequestDto);
 
@@ -115,6 +124,15 @@ public class QuizServiceImpl implements QuizService {
             throw new InvalidQuizQuestionCountException(
                     "Each quiz requires exactly 10 questions, provided: "
                             + size);
+        }
+    }
+
+    private boolean isEnumStringValid(String enumValue) {
+        try {
+            Difficulty.valueOf(enumValue.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            return false;
         }
     }
 }

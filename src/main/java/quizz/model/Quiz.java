@@ -2,6 +2,8 @@ package quizz.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +28,9 @@ public class Quiz {
     private Long id;
     @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Difficulty difficulty;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

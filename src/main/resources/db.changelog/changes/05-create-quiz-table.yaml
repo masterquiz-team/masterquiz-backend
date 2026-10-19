@@ -19,6 +19,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: difficulty
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
                   name: category_id
                   type: BIGINT
                   constraints:
