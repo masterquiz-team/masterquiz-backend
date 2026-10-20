@@ -74,7 +74,8 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
         }
 
         Difficulty difficultyName = Difficulty.valueOf(requestDto.getDifficulty().toUpperCase());
-        List<Question> listOfQuestions = questionRepository.findByDifficulty(difficultyName);
+        List<Question> listOfQuestions = questionRepository
+                .findByDifficultyAndCategory(difficultyName, categoryName);
         Collections.shuffle(listOfQuestions);
 
         List<Question> randomizedQuestions = listOfQuestions.stream()
