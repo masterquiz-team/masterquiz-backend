@@ -55,7 +55,7 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
                         + answerAttemptRequestDto.getAnswerId() + " doesn't exist"));
 
         Optional<Question> question = quizAttempt.getQuiz().getListOfQuestions().stream()
-                .filter(q -> answer.getQuestion().equals(q))
+                .filter(q -> answer.getQuestion().getId().equals(q.getId()))
                 .findFirst();
 
         if (question.isEmpty()) {
