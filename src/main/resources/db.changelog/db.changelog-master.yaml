@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db.changelog/changes/08-create-answer-attempt-table.yaml
   - include:
       file: db.changelog/changes/09-insert-test-data.yaml
+  - include:
+      file: db.changelog/changes/10-create-games-by-category-result-table.yaml
