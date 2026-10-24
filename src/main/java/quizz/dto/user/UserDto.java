@@ -8,4 +8,5 @@ public class UserDto {
     private String email;
     private String nickname;
     private int score;
+    private int totalGamesPlayed;
 }

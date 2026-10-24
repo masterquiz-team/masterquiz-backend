@@ -38,6 +38,8 @@ public class User implements UserDetails {
     private String password;
     @Column(nullable = false)
     private int score = 0;
+    @Column(nullable = false)
+    private int totalGamesPlayed = 0;
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
