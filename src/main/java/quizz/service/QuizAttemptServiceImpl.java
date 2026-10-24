@@ -14,12 +14,14 @@ import quizz.exception.UnauthorizedAccessException;
 import quizz.mapper.QuizAttemptMapper;
 import quizz.model.Category;
 import quizz.model.Difficulty;
+import quizz.model.GamesByCategoryResult;
 import quizz.model.Question;
 import quizz.model.Quiz;
 import quizz.model.QuizAttempt;
 import quizz.model.Status;
 import quizz.model.User;
 import quizz.repository.CategoryRepository;
+import quizz.repository.GamesByCategoryResultRepository;
 import quizz.repository.QuestionRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.QuizRepository;
@@ -35,6 +37,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final QuestionRepository questionRepository;
+    private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
 
     @Override
     @Transactional
@@ -120,6 +123,14 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
         User user = checkIfUserExist(email);
 
         checkIfHasPermission(quizAttempt.getUser(), user);
+
+        user.setTotalGamesPlayed(user.getTotalGamesPlayed() + 1);
+
+        GamesByCategoryResult result = gamesByCategoryResultRepository.findByCategoryIdAndUserId(
+                quizAttempt.getQuiz().getCategory().getId(), user.getId()).orElseThrow(
+                    () -> new EntityNotFoundException("Games by category result doesn't exist"));
+
+        result.setGamesPlayed(result.getGamesPlayed() + 1);
 
         if (!quizAttempt.getStatus().equals(Status.IN_PROGRESS)) {
             throw new InvalidQuizAttemptStateException("Quiz status is not in progress");

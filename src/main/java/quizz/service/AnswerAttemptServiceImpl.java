@@ -1,7 +1,6 @@
 package quizz.service;
 
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,12 +13,14 @@ import quizz.exception.UnauthorizedAccessException;
 import quizz.mapper.AnswerAttemptMapper;
 import quizz.model.Answer;
 import quizz.model.AnswerAttempt;
+import quizz.model.GamesByCategoryResult;
 import quizz.model.Question;
 import quizz.model.QuizAttempt;
 import quizz.model.Status;
 import quizz.model.User;
 import quizz.repository.AnswerAttemptRepository;
 import quizz.repository.AnswerRepository;
+import quizz.repository.GamesByCategoryResultRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.UserRepository;
 import quizz.service.interfaces.AnswerAttemptService;
@@ -32,6 +33,7 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
     private final QuizAttemptRepository quizAttemptRepository;
     private final AnswerRepository answerRepository;
     private final AnswerAttemptMapper answerAttemptMapper;
+    private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
 
     @Override
     @Transactional
@@ -54,13 +56,13 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
                 .orElseThrow(() -> new EntityNotFoundException("Answer with id: "
                         + answerAttemptRequestDto.getAnswerId() + " doesn't exist"));
 
-        Optional<Question> question = quizAttempt.getQuiz().getListOfQuestions().stream()
+        Question question = quizAttempt.getQuiz().getListOfQuestions().stream()
                 .filter(q -> answer.getQuestion().getId().equals(q.getId()))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Answer doesn't belong to any question"));
 
-        if (question.isEmpty()) {
-            throw new EntityNotFoundException("Answer doesn't belong to any question");
-        }
+        int questionPoints = question.getDifficulty().getPoints();
 
         boolean alreadyAnswered = answerAttemptRepository
                 .existsByQuizAttemptIdAndAnswerQuestionId(
@@ -79,19 +81,30 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
 
         AnswerAttempt savedAttempt = answerAttemptRepository.save(answerAttempt);
 
+        GamesByCategoryResult gamesByCategoryResult = gamesByCategoryResultRepository
+                .findByCategoryIdAndUserId(question.getCategory().getId(), user.getId())
+                .orElseGet(() -> {
+                    GamesByCategoryResult categoryResult = new GamesByCategoryResult();
+                    categoryResult.setCategory(question.getCategory());
+                    categoryResult.setUser(user);
+                    return gamesByCategoryResultRepository.save(categoryResult);
+                });
+
         if (answer.isCorrect()) {
-            user.setScore(user.getScore() + question.get().getDifficulty().getPoints());
+            user.setScore(user.getScore() + questionPoints);
+            gamesByCategoryResult.setCategoryScore(gamesByCategoryResult.getCategoryScore()
+                    + questionPoints);
         }
 
         List<Long> answersIds = answerRepository
-                .findByQuestionIdAndCorrectTrue(question.get().getId())
+                .findByQuestionIdAndCorrectTrue(question.getId())
                 .stream()
                 .map(Answer::getId)
                 .toList();
 
         AnswerAttemptDto answerAttemptDto = answerAttemptMapper.toDto(savedAttempt);
-        answerAttemptDto.setQuestionId(question.get().getId());
-        answerAttemptDto.setFeedback(question.get().getFeedback());
+        answerAttemptDto.setQuestionId(question.getId());
+        answerAttemptDto.setFeedback(question.getFeedback());
         answerAttemptDto.setCorrectAnswerIds(answersIds);
 
         return answerAttemptDto;

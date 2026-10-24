@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-games-by-category-result
+      author: Patryk
+      changes:
+        - createTable:
+            tableName: games_by_category_result
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: category_score
+                  type: INT
+                  constraints:
+                    nullable: false
+                    defaultValueNumeric: 0
+
+              - column:
+                  name: games_played
+                  type: INT
+                  constraints:
+                    nullable: false
+                    defaultValueNumeric: 0
+
+        - addForeignKeyConstraint:
+            baseTableName: games_by_category_result
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_games_by_category_result_user
+
+        - addForeignKeyConstraint:
+            baseTableName: games_by_category_result
+            baseColumnNames: category_id
+            referencedTableName: categories
+            referencedColumnNames: id
+            constraintName: fk_games_by_category_result_category
