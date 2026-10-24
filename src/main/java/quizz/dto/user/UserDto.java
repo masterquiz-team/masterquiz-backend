@@ -7,6 +7,7 @@ public class UserDto {
     private Long id;
     private String email;
     private String nickname;
+    private String avatarId;
     private int score;
     private int totalGamesPlayed;
 }
