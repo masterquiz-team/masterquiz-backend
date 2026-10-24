@@ -9,6 +9,7 @@ import quizz.dto.register.UserRequestDto;
 import quizz.dto.register.UserResponseDto;
 import quizz.exception.RegisterException;
 import quizz.mapper.UserRegistrationMapper;
+import quizz.model.Avatar;
 import quizz.model.Role;
 import quizz.model.User;
 import quizz.repository.UserRepository;
@@ -30,6 +31,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         user.setRoles(new ArrayList<>());
         user.getRoles().add(Role.USER);
+        user.setAvatar(Avatar.AVATAR_1);
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }

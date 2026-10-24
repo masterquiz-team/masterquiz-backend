@@ -33,6 +33,9 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Avatar avatar = Avatar.valueOf("avatar-1");
+    @Column(nullable = false)
     private String nickname;
     @Column(nullable = false)
     private String password;
