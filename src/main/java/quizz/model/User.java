@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +42,9 @@ public class User implements UserDetails {
     private String password;
     @Column(nullable = false)
     private int score = 0;
+    @Column(nullable = false)
+    private int streak = 0;
+    private LocalDate lastTimePlayed;
     @Column(nullable = false)
     private int totalGamesPlayed = 0;
     @ElementCollection(fetch = FetchType.EAGER)
