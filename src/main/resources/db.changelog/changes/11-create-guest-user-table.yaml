@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11-create-guest-user-table
+      author: PatrykWski
+      changes:
+        - createTable:
+            tableName: guest_users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nickname
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: avatar
+                  type: VARCHAR(255)
+                  defaultValue: AVATAR-1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: score
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_games_played
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false

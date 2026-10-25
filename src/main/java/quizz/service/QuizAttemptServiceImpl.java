@@ -3,6 +3,7 @@ package quizz.service;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import quizz.mapper.QuizAttemptMapper;
 import quizz.model.Category;
 import quizz.model.Difficulty;
 import quizz.model.GamesByCategoryResult;
+import quizz.model.GuestUser;
 import quizz.model.Question;
 import quizz.model.Quiz;
 import quizz.model.QuizAttempt;
@@ -22,6 +24,7 @@ import quizz.model.Status;
 import quizz.model.User;
 import quizz.repository.CategoryRepository;
 import quizz.repository.GamesByCategoryResultRepository;
+import quizz.repository.GuestUserRepository;
 import quizz.repository.QuestionRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.QuizRepository;
@@ -38,35 +41,29 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
     private final CategoryRepository categoryRepository;
     private final QuestionRepository questionRepository;
     private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
+    private final GuestUserRepository guestUserRepository;
 
     @Override
     @Transactional
     public QuizAttemptDto createQuizAttempt(Long quizId,
-                                            String email) {
+                                            String username) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(
                 () -> new EntityNotFoundException(
                         "Quiz with id: " + quizId + " doesn't exist"));
-        User user = checkIfUserExist(email);
+        Optional<User> user = userRepository.findByEmail(username);
+        Optional<GuestUser> guestUser = guestUserRepository.findByNickname(username);
 
-        QuizAttempt quizAttempt = new QuizAttempt();
-        quizAttempt.setQuiz(quiz);
-        quizAttempt.setUser(user);
-        quizAttempt.setStatus(Status.IN_PROGRESS);
-        quizAttempt.setStartedAt(LocalDateTime.now());
+        QuizAttempt quizAttempt = createQuizAttemptMethod(user, guestUser, quiz);
 
-        QuizAttempt savedQuizAttempt = attemptRepository.save(quizAttempt);
-
-        return quizAttemptMapper.toDto(savedQuizAttempt);
+        return quizAttemptMapper.toDto(quizAttempt);
     }
 
     @Override
     @Transactional
     public QuizAttemptDto createQuizAttemptWithRandomQuestions(
             QuizAttemptRandomRequestDto requestDto,
-            String email) {
-        User user = checkIfUserExist(email);
-        QuizAttempt quizAttempt = new QuizAttempt();
-        quizAttempt.setUser(user);
+            String username) {
+
         Category categoryName = categoryRepository.findByName(requestDto.getCategory())
                 .orElseThrow(() -> new EntityNotFoundException("Category name: "
                         + requestDto.getCategory() + " doesn't exist"));
@@ -93,62 +90,125 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
 
         Quiz savedQuiz = quizRepository.save(quiz);
 
-        quizAttempt.setQuiz(savedQuiz);
-        quizAttempt.setStatus(Status.IN_PROGRESS);
-        quizAttempt.setStartedAt(LocalDateTime.now());
-        QuizAttempt savedQuizAttempt = attemptRepository.save(quizAttempt);
+        Optional<User> user = userRepository.findByEmail(username);
+        Optional<GuestUser> guestUser = guestUserRepository.findByNickname(username);
 
-        return quizAttemptMapper.toDto(savedQuizAttempt);
+        QuizAttempt quizAttempt = createQuizAttemptMethod(user, guestUser, savedQuiz);
+
+        return quizAttemptMapper.toDto(quizAttempt);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public QuizAttemptDto getQuizAttempt(Long id, String email) {
-        User user = checkIfUserExist(email);
+    public QuizAttemptDto getQuizAttempt(Long id, String username) {
+        Optional<User> user = userRepository.findByEmail(username);
+
+        Optional<GuestUser> guestUser = guestUserRepository.findByNickname(username);
+
         QuizAttempt quizAttempt = attemptRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(
                         "Quiz attempt with id: " + id + " doesn't exist"));
 
-        checkIfHasPermission(quizAttempt.getUser(), user);
+        checkPermission(user, guestUser, quizAttempt);
 
         return quizAttemptMapper.toDto(quizAttempt);
     }
 
     @Override
     @Transactional
-    public QuizAttemptDto finishQuizAttempt(Long id, String email) {
+    public QuizAttemptDto finishQuizAttempt(Long id, String username) {
         QuizAttempt quizAttempt = attemptRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(
                         "Quiz attempt with id: " + id + " doesn't exist"));
-        User user = checkIfUserExist(email);
-
-        checkIfHasPermission(quizAttempt.getUser(), user);
-
-        user.setTotalGamesPlayed(user.getTotalGamesPlayed() + 1);
-
-        GamesByCategoryResult result = gamesByCategoryResultRepository.findByCategoryIdAndUserId(
-                quizAttempt.getQuiz().getCategory().getId(), user.getId()).orElseThrow(
-                    () -> new EntityNotFoundException("Games by category result doesn't exist"));
-
-        result.setGamesPlayed(result.getGamesPlayed() + 1);
 
         if (!quizAttempt.getStatus().equals(Status.IN_PROGRESS)) {
             throw new InvalidQuizAttemptStateException("Quiz status is not in progress");
+        }
+
+        Optional<User> user = userRepository.findByEmail(username);
+        Optional<GuestUser> guestUser = guestUserRepository.findByNickname(username);
+
+        if (user.isPresent() == guestUser.isPresent()) {
+            throw new UnauthorizedAccessException("Invalid user identity");
+        }
+
+        if (user.isPresent()) {
+            if (quizAttempt.getUser() == null
+                    || !user.get().getId().equals(quizAttempt.getUser().getId())) {
+                throw new UnauthorizedAccessException("You have no permission");
+            }
+            user.get().setTotalGamesPlayed(user.get().getTotalGamesPlayed() + 1);
+
+            GamesByCategoryResult result = gamesByCategoryResultRepository
+                    .findByCategoryIdAndUserId(
+                            quizAttempt.getQuiz().getCategory().getId(),
+                            user.get().getId()).orElseThrow(
+                                () -> new EntityNotFoundException(
+                                    "Games by category result doesn't exist"));
+
+            result.setGamesPlayed(result.getGamesPlayed() + 1);
+
+        } else {
+            if (quizAttempt.getGuestUser() == null
+                    || !guestUser.get().getId().equals(quizAttempt.getGuestUser().getId())) {
+                throw new UnauthorizedAccessException("You have no permission");
+            }
+            guestUser.get().setTotalGamesPlayed(guestUser.get().getTotalGamesPlayed() + 1);
+
+            GamesByCategoryResult result = gamesByCategoryResultRepository
+                    .findByCategoryIdAndGuestUserId(
+                            quizAttempt.getQuiz().getCategory().getId(),
+                            guestUser.get().getId()).orElseThrow(
+                                () -> new EntityNotFoundException(
+                                    "Games by category result doesn't exist"));
+
+            result.setGamesPlayed(result.getGamesPlayed() + 1);
         }
         quizAttempt.setFinishedAt(LocalDateTime.now());
         quizAttempt.setStatus(Status.FINISHED);
         return quizAttemptMapper.toDto(quizAttempt);
     }
 
-    private User checkIfUserExist(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException(
-                        "User with email: " + email + " doesn't exist"));
+    private QuizAttempt createQuizAttemptMethod(
+            Optional<User> user,
+            Optional<GuestUser> guestUser,
+            Quiz quiz) {
+
+        QuizAttempt quizAttempt = new QuizAttempt();
+        quizAttempt.setStatus(Status.IN_PROGRESS);
+        quizAttempt.setStartedAt(LocalDateTime.now());
+        quizAttempt.setQuiz(quiz);
+        if (user.isEmpty() && guestUser.isPresent()) {
+            quizAttempt.setGuestUser(guestUser.get());
+        } else if (user.isPresent() && guestUser.isEmpty()) {
+            quizAttempt.setUser(user.get());
+        } else {
+            throw new EntityNotFoundException("User or guest user doesn't exist");
+        }
+        return attemptRepository.save(quizAttempt);
     }
 
-    private void checkIfHasPermission(User quizAttemptUser, User user) {
-        if (!quizAttemptUser.getId().equals(user.getId())) {
-            throw new UnauthorizedAccessException("You have no permission");
+    private void checkPermission(
+            Optional<User> user,
+            Optional<GuestUser> guestUser,
+            QuizAttempt quizAttempt) {
+
+        if (user.isPresent() == guestUser.isPresent()) {
+            throw new UnauthorizedAccessException("Invalid user identity");
+        }
+        if (user.isPresent()) {
+            User unwrappedUser = user.get();
+
+            if (quizAttempt.getUser() == null
+                    || !unwrappedUser.getId().equals(quizAttempt.getUser().getId())) {
+                throw new UnauthorizedAccessException("You have no permission");
+            }
+        } else {
+            GuestUser unwrappedGuestUser = guestUser.get();
+            if (quizAttempt.getGuestUser() == null
+                    || !unwrappedGuestUser.getId().equals(quizAttempt.getGuestUser().getId())) {
+                throw new UnauthorizedAccessException("You have no permission");
+            }
         }
     }
 
@@ -160,4 +220,5 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
             return false;
         }
     }
+
 }

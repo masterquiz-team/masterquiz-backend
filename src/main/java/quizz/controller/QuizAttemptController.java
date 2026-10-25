@@ -30,7 +30,7 @@ public class QuizAttemptController {
     @PostMapping("/{quizId}")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create quiz attempt", description = "Endpoint to create quiz attempt")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     public QuizAttemptDto createQuizAttempt(
             @PathVariable Long quizId,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -41,7 +41,7 @@ public class QuizAttemptController {
     @PostMapping("/random-quiz")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create quiz attempt", description = "Endpoint to create quiz attempt")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     public QuizAttemptDto createQuizAttemptWithRandomQuestions(
             @Valid @RequestBody QuizAttemptRandomRequestDto quizAttemptRandomRequestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -51,7 +51,7 @@ public class QuizAttemptController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get quiz attempt", description = "Endpoint to get quiz attempt by id")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     public QuizAttemptDto getQuizAttempt(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -61,7 +61,7 @@ public class QuizAttemptController {
     @PutMapping("/{id}/finish")
     @Operation(summary = "Change quiz attempt status",
             description = "Endpoint to change quiz attempt status")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     public QuizAttemptDto finishQuizAttempt(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
