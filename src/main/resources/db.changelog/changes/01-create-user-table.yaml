@@ -33,11 +33,13 @@ databaseChangeLog:
               - column:
                   name: score
                   type: INT
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false
               - column:
                   name: total_games_played
                   type: INT
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false
               - column:
@@ -48,7 +50,7 @@ databaseChangeLog:
               - column:
                   name: streak
                   type: INT
-                  defaultIntValue: 0
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false
               - column:
