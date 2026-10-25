@@ -16,6 +16,7 @@ import quizz.model.Answer;
 import quizz.model.AnswerAttempt;
 import quizz.model.GamesByCategoryResult;
 import quizz.model.GuestUser;
+import quizz.model.Level;
 import quizz.model.Question;
 import quizz.model.QuizAttempt;
 import quizz.model.Status;
@@ -101,6 +102,8 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
                     });
             if (answer.isCorrect()) {
                 unwrappedUser.setScore(unwrappedUser.getScore() + questionPoints);
+                Level level = Level.fromScore(unwrappedUser.getScore());
+                unwrappedUser.setLevel(level);
                 gamesByCategoryResult.setCategoryScore(gamesByCategoryResult.getCategoryScore()
                         + questionPoints);
             }
