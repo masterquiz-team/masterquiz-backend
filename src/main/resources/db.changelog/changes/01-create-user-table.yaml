@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 01-create-user-table-and-roles
-      author: PatrykWski
+      author: Patryk
       changes:
         - createTable:
             tableName: users
@@ -40,6 +40,15 @@ databaseChangeLog:
                   type: INT
                   constraints:
                     nullable: false
+              - column:
+                  name: streak
+                  type: INT
+                  defaultIntValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_time_played
+                  type: DATE
               - column:
                   name: password
                   type: VARCHAR(255)

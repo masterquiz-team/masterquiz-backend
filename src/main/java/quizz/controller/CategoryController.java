@@ -47,7 +47,7 @@ public class CategoryController {
     @GetMapping
     @Operation(summary = "Get page of categories",
             description = "Endpoint to get page of categories")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     public Page<CategoryDto> getPageOfCategories(Pageable pageable) {
         return categoryService.getPageOfCategories(pageable);
     }

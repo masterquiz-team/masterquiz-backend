@@ -1,5 +1,6 @@
 package quizz.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -139,7 +140,17 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
                 throw new UnauthorizedAccessException("You have no permission");
             }
             unwrappedUser.setTotalGamesPlayed(unwrappedUser.getTotalGamesPlayed() + 1);
-
+            LocalDate today = LocalDate.now();
+            if (unwrappedUser.getStreak() == 0) {
+                unwrappedUser.setStreak(1);
+                unwrappedUser.setLastTimePlayed(LocalDate.now());
+            } else if (unwrappedUser.getLastTimePlayed().plusDays(1).equals(today)) {
+                unwrappedUser.setStreak(unwrappedUser.getStreak() + 1);
+                unwrappedUser.setLastTimePlayed(LocalDate.now());
+            } else if (unwrappedUser.getLastTimePlayed().plusDays(1).isBefore(today)) {
+                unwrappedUser.setStreak(1);
+                unwrappedUser.setLastTimePlayed(LocalDate.now());
+            }
             GamesByCategoryResult result = gamesByCategoryResultRepository
                     .findByCategoryIdAndUserId(
                             quizAttempt.getQuiz().getCategory().getId(),
