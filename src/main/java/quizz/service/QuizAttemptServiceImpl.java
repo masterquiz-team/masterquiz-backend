@@ -133,34 +133,50 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
         }
 
         if (user.isPresent()) {
+            User unwrappedUser = user.get();
             if (quizAttempt.getUser() == null
-                    || !user.get().getId().equals(quizAttempt.getUser().getId())) {
+                    || !unwrappedUser.getId().equals(quizAttempt.getUser().getId())) {
                 throw new UnauthorizedAccessException("You have no permission");
             }
-            user.get().setTotalGamesPlayed(user.get().getTotalGamesPlayed() + 1);
+            unwrappedUser.setTotalGamesPlayed(unwrappedUser.getTotalGamesPlayed() + 1);
 
             GamesByCategoryResult result = gamesByCategoryResultRepository
                     .findByCategoryIdAndUserId(
                             quizAttempt.getQuiz().getCategory().getId(),
-                            user.get().getId()).orElseThrow(
-                                () -> new EntityNotFoundException(
-                                    "Games by category result doesn't exist"));
+                            unwrappedUser.getId()).orElseGet(() -> {
+                                GamesByCategoryResult userCatResult = new GamesByCategoryResult();
+                                userCatResult.setGuestUser(null);
+                                userCatResult.setCategoryScore(0);
+                                userCatResult.setUser(unwrappedUser);
+                                userCatResult.setCategory(quizAttempt.getQuiz().getCategory());
+                                userCatResult.setGamesPlayed(0);
+                                return gamesByCategoryResultRepository.save(userCatResult);
+                            });
 
             result.setGamesPlayed(result.getGamesPlayed() + 1);
 
         } else {
+
             if (quizAttempt.getGuestUser() == null
                     || !guestUser.get().getId().equals(quizAttempt.getGuestUser().getId())) {
                 throw new UnauthorizedAccessException("You have no permission");
             }
-            guestUser.get().setTotalGamesPlayed(guestUser.get().getTotalGamesPlayed() + 1);
+            GuestUser unwrappedGuestUser = guestUser.get();
+            unwrappedGuestUser.setTotalGamesPlayed(unwrappedGuestUser.getTotalGamesPlayed() + 1);
 
             GamesByCategoryResult result = gamesByCategoryResultRepository
                     .findByCategoryIdAndGuestUserId(
                             quizAttempt.getQuiz().getCategory().getId(),
-                            guestUser.get().getId()).orElseThrow(
-                                () -> new EntityNotFoundException(
-                                    "Games by category result doesn't exist"));
+                            unwrappedGuestUser.getId()).orElseGet(() -> {
+
+                                GamesByCategoryResult guestCatResult = new GamesByCategoryResult();
+                                guestCatResult.setUser(null);
+                                guestCatResult.setCategoryScore(0);
+                                guestCatResult.setGuestUser(unwrappedGuestUser);
+                                guestCatResult.setCategory(quizAttempt.getQuiz().getCategory());
+                                guestCatResult.setGamesPlayed(0);
+                                return gamesByCategoryResultRepository.save(guestCatResult);
+                            });
 
             result.setGamesPlayed(result.getGamesPlayed() + 1);
         }
@@ -179,9 +195,11 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
         quizAttempt.setStartedAt(LocalDateTime.now());
         quizAttempt.setQuiz(quiz);
         if (user.isEmpty() && guestUser.isPresent()) {
-            quizAttempt.setGuestUser(guestUser.get());
+            GuestUser unwrappedGuestUser = guestUser.get();
+            quizAttempt.setGuestUser(unwrappedGuestUser);
         } else if (user.isPresent() && guestUser.isEmpty()) {
-            quizAttempt.setUser(user.get());
+            User unwrappedUser = user.get();
+            quizAttempt.setUser(unwrappedUser);
         } else {
             throw new EntityNotFoundException("User or guest user doesn't exist");
         }
