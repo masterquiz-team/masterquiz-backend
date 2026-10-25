@@ -30,7 +30,7 @@ public class AnswerAttemptController {
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create answer attempt", description = "Endpoint to create answer attempt")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     public AnswerAttemptDto createAnswerAttempt(
             @Valid @RequestBody AnswerAttemptRequestDto answerAttemptRequestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -42,7 +42,7 @@ public class AnswerAttemptController {
     @GetMapping("/{quizAttemptId}")
     @Operation(summary = "Get list of answer attempts",
             description = "Endpoint to get list of answer attempts")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     public List<AnswerAttemptDto> getListOfAnswerAttempts(
             @PathVariable Long quizAttemptId, @AuthenticationPrincipal UserDetails userDetails) {
         return answerAttemptService.getAnswerAttemptsByQuizAttemptId(quizAttemptId,

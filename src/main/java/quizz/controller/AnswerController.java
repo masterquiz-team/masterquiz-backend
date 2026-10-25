@@ -44,7 +44,7 @@ public class AnswerController {
     }
 
     @GetMapping("/question/{questionId}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     @Operation(summary = "Get list of answers",
             description = "Endpoint to get list of answers by question id")
     List<AnswerDto> getAnswersByQuestionId(@PathVariable Long questionId) {
@@ -52,7 +52,7 @@ public class AnswerController {
     }
 
     @GetMapping("/question/{questionId}/quiz")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     @Operation(summary = "Get list of answers",
             description = "Endpoint to get list of answers by question id without correct field")
     List<AnswerDto> getAnswersByQuestionIdWithoutCorrectField(@PathVariable Long questionId) {

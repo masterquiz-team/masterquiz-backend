@@ -38,14 +38,14 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     @Operation(summary = "Get quiz", description = "Endpoint to get quiz by id")
     public QuizDto getQuiz(@PathVariable Long id) {
         return quizService.getQuiz(id);
     }
 
     @GetMapping("/category/{categoryId}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     @Operation(summary = "Get page of quizzes",
             description = "Endpoint to get page of quiz by category id")
     public Page<QuizDto> getPageOfQuizByCategory(@PathVariable Long categoryId,
