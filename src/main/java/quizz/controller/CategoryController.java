@@ -39,7 +39,7 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a category", description = "Endpoint to get category by id")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     public CategoryDto getCategory(@PathVariable Long id) {
         return categoryService.getCategory(id);
     }
