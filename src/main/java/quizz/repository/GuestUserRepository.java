@@ -7,7 +7,8 @@ import quizz.model.GuestUser;
 
 @Repository
 public interface GuestUserRepository extends JpaRepository<GuestUser, Long> {
-    boolean doesGuestExists(String nickname);
+    boolean existsByNickname(String nickname);
 
     Optional<GuestUser> findByNickname(String nickname);
 }
+

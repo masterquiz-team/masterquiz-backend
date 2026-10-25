@@ -1,7 +1,7 @@
 package quizz.service.interfaces;
 
-import quizz.dto.guestuser.GuestUserDto;
+import quizz.dto.guestuser.GuestLoginResponseDto;
 
 public interface GuestUserService {
-    GuestUserDto createGuestUser();
+    GuestLoginResponseDto createGuestUser();
 }

@@ -3,6 +3,8 @@ package quizz.service;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import quizz.config.JwtUtil;
+import quizz.dto.guestuser.GuestLoginResponseDto;
 import quizz.dto.guestuser.GuestUserDto;
 import quizz.mapper.GuestUserMapper;
 import quizz.model.Avatar;
@@ -16,14 +18,15 @@ import quizz.service.interfaces.GuestUserService;
 public class GuestUserServiceImpl implements GuestUserService {
     private final GuestUserRepository userRepository;
     private final GuestUserMapper guestUserMapper;
+    private final JwtUtil jwtUtil;
     private final Random random = new Random();
 
     @Override
-    public GuestUserDto createGuestUser() {
+    public GuestLoginResponseDto createGuestUser() {
         String nickname;
         do {
             nickname = "guest_" + random.nextInt(1000000);
-        } while (userRepository.doesGuestExists(nickname));
+        } while (userRepository.existsByNickname(nickname));
 
         GuestUser guestUser = new GuestUser();
         guestUser.setAvatar(Avatar.AVATAR_1);
@@ -32,6 +35,14 @@ public class GuestUserServiceImpl implements GuestUserService {
         guestUser.setScore(0);
         guestUser.setTotalGamesPlayed(0);
         GuestUser savedUser = userRepository.save(guestUser);
-        return guestUserMapper.toDto(savedUser);
+        GuestUserDto guestUserDto = guestUserMapper.toDto(savedUser);
+
+        String token = jwtUtil.createToken(savedUser);
+
+        GuestLoginResponseDto guestLoginResponseDto = new GuestLoginResponseDto();
+        guestLoginResponseDto.setGuestUserDto(guestUserDto);
+        guestLoginResponseDto.setToken(token);
+
+        return guestLoginResponseDto;
     }
 }
