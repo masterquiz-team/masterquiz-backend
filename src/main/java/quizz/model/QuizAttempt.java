@@ -28,8 +28,11 @@ public class QuizAttempt {
     @JoinColumn(name = "quiz_id", nullable = false)
     private Quiz quiz;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "guest_user_id")
+    private GuestUser guestUser;
     @Column(nullable = false)
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;

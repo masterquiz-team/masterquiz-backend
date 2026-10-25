@@ -14,6 +14,9 @@ public interface GamesByCategoryResultRepository extends JpaRepository<
         GamesByCategoryResult, Long> {
     Optional<GamesByCategoryResult> findByCategoryIdAndUserId(Long categoryId, Long userId);
 
+    Optional<GamesByCategoryResult> findByCategoryIdAndGuestUserId(
+            Long categoryId, Long guestUserId);
+
     List<GamesByCategoryResult> findAllByUserId(Long id);
 
     @Query("FROM GamesByCategoryResult r "

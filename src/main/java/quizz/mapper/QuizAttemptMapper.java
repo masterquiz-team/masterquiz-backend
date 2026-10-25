@@ -10,5 +10,6 @@ public interface QuizAttemptMapper {
 
     @Mapping(target = "quizId", source = "quiz.id")
     @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "guestUserId", source = "guestUser.id")
     QuizAttemptDto toDto(QuizAttempt quizAttempt);
 }

@@ -1,6 +1,7 @@
 package quizz.service;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import quizz.mapper.AnswerAttemptMapper;
 import quizz.model.Answer;
 import quizz.model.AnswerAttempt;
 import quizz.model.GamesByCategoryResult;
+import quizz.model.GuestUser;
 import quizz.model.Question;
 import quizz.model.QuizAttempt;
 import quizz.model.Status;
@@ -21,6 +23,7 @@ import quizz.model.User;
 import quizz.repository.AnswerAttemptRepository;
 import quizz.repository.AnswerRepository;
 import quizz.repository.GamesByCategoryResultRepository;
+import quizz.repository.GuestUserRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.UserRepository;
 import quizz.service.interfaces.AnswerAttemptService;
@@ -34,19 +37,23 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
     private final AnswerRepository answerRepository;
     private final AnswerAttemptMapper answerAttemptMapper;
     private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
+    private final GuestUserRepository guestUserRepository;
 
     @Override
     @Transactional
     public AnswerAttemptDto createAnswerAttempt(
             AnswerAttemptRequestDto answerAttemptRequestDto,
-            String email) {
+            String username) {
+
+        Optional<User> user = userRepository.findByEmail(username);
+        Optional<GuestUser> guestUser = guestUserRepository.findByNickname(username);
+
         QuizAttempt quizAttempt = quizAttemptRepository
                 .findById(answerAttemptRequestDto.getQuizAttemptId()).orElseThrow(
                         () -> new EntityNotFoundException("Quiz attempt with id: "
                                 + answerAttemptRequestDto.getQuizAttemptId() + " doesn't exist"));
-        User user = findUser(email);
 
-        checkPermission(quizAttempt.getUser(), user);
+        checkPermission(user, guestUser, quizAttempt);
 
         if (!quizAttempt.getStatus().equals(Status.IN_PROGRESS)) {
             throw new InvalidQuizAttemptStateException("Quiz attempt has to be in progress");
@@ -81,19 +88,41 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
 
         AnswerAttempt savedAttempt = answerAttemptRepository.save(answerAttempt);
 
-        GamesByCategoryResult gamesByCategoryResult = gamesByCategoryResultRepository
-                .findByCategoryIdAndUserId(question.getCategory().getId(), user.getId())
-                .orElseGet(() -> {
-                    GamesByCategoryResult categoryResult = new GamesByCategoryResult();
-                    categoryResult.setCategory(question.getCategory());
-                    categoryResult.setUser(user);
-                    return gamesByCategoryResultRepository.save(categoryResult);
-                });
+        if (user.isPresent()) {
+            User unwrappedUser = user.get();
+            GamesByCategoryResult gamesByCategoryResult = gamesByCategoryResultRepository
+                    .findByCategoryIdAndUserId(
+                            question.getCategory().getId(), unwrappedUser.getId())
+                    .orElseGet(() -> {
+                        GamesByCategoryResult categoryResult = new GamesByCategoryResult();
+                        categoryResult.setCategory(question.getCategory());
+                        categoryResult.setUser(unwrappedUser);
+                        return gamesByCategoryResultRepository.save(categoryResult);
+                    });
+            if (answer.isCorrect()) {
+                unwrappedUser.setScore(unwrappedUser.getScore() + questionPoints);
+                gamesByCategoryResult.setCategoryScore(gamesByCategoryResult.getCategoryScore()
+                        + questionPoints);
+            }
+        }
 
-        if (answer.isCorrect()) {
-            user.setScore(user.getScore() + questionPoints);
-            gamesByCategoryResult.setCategoryScore(gamesByCategoryResult.getCategoryScore()
-                    + questionPoints);
+        if (guestUser.isPresent()) {
+            GuestUser unwrappedGuestUser = guestUser.get();
+            GamesByCategoryResult gamesByCategoryResult = gamesByCategoryResultRepository
+                    .findByCategoryIdAndGuestUserId(
+                            question.getCategory().getId(),
+                            unwrappedGuestUser.getId())
+                    .orElseGet(() -> {
+                        GamesByCategoryResult categoryResult = new GamesByCategoryResult();
+                        categoryResult.setCategory(question.getCategory());
+                        categoryResult.setGuestUser(unwrappedGuestUser);
+                        return gamesByCategoryResultRepository.save(categoryResult);
+                    });
+            if (answer.isCorrect()) {
+                unwrappedGuestUser.setScore(unwrappedGuestUser.getScore() + questionPoints);
+                gamesByCategoryResult.setCategoryScore(gamesByCategoryResult.getCategoryScore()
+                        + questionPoints);
+            }
         }
 
         List<Long> answersIds = answerRepository
@@ -112,13 +141,15 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnswerAttemptDto> getAnswerAttemptsByQuizAttemptId(Long id, String email) {
+    public List<AnswerAttemptDto> getAnswerAttemptsByQuizAttemptId(Long id, String username) {
         QuizAttempt quizAttempt = quizAttemptRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(
                         "Quiz attempt with id: " + id + " doesn't exist"));
-        User user = findUser(email);
 
-        checkPermission(quizAttempt.getUser(), user);
+        Optional<User> user = userRepository.findByEmail(username);
+        Optional<GuestUser> guestUser = guestUserRepository.findByNickname(username);
+
+        checkPermission(user, guestUser, quizAttempt);
 
         List<AnswerAttempt> answerAttempts = answerAttemptRepository
                 .findByQuizAttemptId(quizAttempt.getId());
@@ -128,14 +159,27 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
                 .toList();
     }
 
-    private void checkPermission(User quizAttemptUser, User user) {
-        if (!quizAttemptUser.getUsername().equals(user.getUsername())) {
-            throw new UnauthorizedAccessException("You have no permission");
-        }
-    }
+    private void checkPermission(
+            Optional<User> user,
+            Optional<GuestUser> guestUser,
+            QuizAttempt quizAttempt) {
 
-    private User findUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException("User with email: " + email + " doesn't exist"));
+        if (user.isPresent() == guestUser.isPresent()) {
+            throw new UnauthorizedAccessException("Invalid user identity");
+        }
+        if (user.isPresent()) {
+            User unwrappedUser = user.get();
+
+            if (quizAttempt.getUser() == null
+                    || !unwrappedUser.getId().equals(quizAttempt.getUser().getId())) {
+                throw new UnauthorizedAccessException("You have no permission");
+            }
+        } else {
+            GuestUser unwrappedGuestUser = guestUser.get();
+            if (quizAttempt.getGuestUser() == null
+                    || !unwrappedGuestUser.getId().equals(quizAttempt.getGuestUser().getId())) {
+                throw new UnauthorizedAccessException("You have no permission");
+            }
+        }
     }
 }

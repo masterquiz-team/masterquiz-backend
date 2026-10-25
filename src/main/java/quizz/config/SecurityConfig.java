@@ -38,7 +38,7 @@ public class SecurityConfig {
                                         "/register", "/login",
                                         "/swagger-ui/**", "/v3/api-docs/**",
                                         "/swagger-ui.html", "/swagger-ui/index.html",
-                                        "/swagger-resources/**", "/webjars/**")
+                                        "/swagger-resources/**", "/webjars/**", "/guest")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())

@@ -20,9 +20,9 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
-                  name: avatar_id
+                  name: avatar
                   type: VARCHAR(255)
-                  defaultValue: avatar-1
+                  defaultValue: AVATAR-1
                   constraints:
                     nullable: false
               - column:
