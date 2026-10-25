@@ -12,6 +12,9 @@ import quizz.model.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "avatarId", source = "avatar")
+    @Mapping(target = "levelTitle", source = "level.title")
+    @Mapping(target = "levelPoints", source = "level.points")
+    @Mapping(target = "iconPath", source = "level.iconPath")
     UserDto toDto(User user);
 
     @Mapping(target = "avatar", source = "avatarId")

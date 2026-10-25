@@ -46,6 +46,9 @@ public class User implements UserDetails {
     private int streak = 0;
     private LocalDate lastTimePlayed;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Level level = Level.LEVEL_1;
+    @Column(nullable = false)
     private int totalGamesPlayed = 0;
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
