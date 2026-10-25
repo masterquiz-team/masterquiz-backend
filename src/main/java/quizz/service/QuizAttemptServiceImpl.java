@@ -151,7 +151,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
                                 userCatResult.setCategory(quizAttempt.getQuiz().getCategory());
                                 userCatResult.setGamesPlayed(0);
                                 return gamesByCategoryResultRepository.save(userCatResult);
-                    });
+                            });
 
             result.setGamesPlayed(result.getGamesPlayed() + 1);
 
@@ -168,14 +168,15 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
                     .findByCategoryIdAndGuestUserId(
                             quizAttempt.getQuiz().getCategory().getId(),
                             unwrappedGuestUser.getId()).orElseGet(() -> {
-                        GamesByCategoryResult guestCatResult = new GamesByCategoryResult();
-                        guestCatResult.setUser(null);
-                        guestCatResult.setCategoryScore(0);
-                        guestCatResult.setGuestUser(unwrappedGuestUser);
-                        guestCatResult.setCategory(quizAttempt.getQuiz().getCategory());
-                        guestCatResult.setGamesPlayed(0);
-                        return gamesByCategoryResultRepository.save(guestCatResult);
-                    });
+
+                                GamesByCategoryResult guestCatResult = new GamesByCategoryResult();
+                                guestCatResult.setUser(null);
+                                guestCatResult.setCategoryScore(0);
+                                guestCatResult.setGuestUser(unwrappedGuestUser);
+                                guestCatResult.setCategory(quizAttempt.getQuiz().getCategory());
+                                guestCatResult.setGamesPlayed(0);
+                                return gamesByCategoryResultRepository.save(guestCatResult);
+                            });
 
             result.setGamesPlayed(result.getGamesPlayed() + 1);
         }
