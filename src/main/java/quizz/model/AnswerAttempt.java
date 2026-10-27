@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,8 @@ public class AnswerAttempt {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id", nullable = false)
     private Answer answer;
+    @Column(nullable = false)
+    private LocalDateTime answeredAt;
     @Column(nullable = false)
     private boolean correctAnswer;
 

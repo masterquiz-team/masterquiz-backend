@@ -1,5 +1,6 @@
 package quizz.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +85,7 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
 
         AnswerAttempt answerAttempt = new AnswerAttempt();
         answerAttempt.setAnswer(answer);
+        answerAttempt.setAnsweredAt(LocalDateTime.now());
         answerAttempt.setCorrectAnswer(answer.isCorrect());
         answerAttempt.setQuizAttempt(quizAttempt);
 
