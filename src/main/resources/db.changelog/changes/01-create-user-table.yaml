@@ -57,6 +57,11 @@ databaseChangeLog:
                   name: last_time_played
                   type: DATE
               - column:
+                  name: created_at
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
                   name: password
                   type: VARCHAR(255)
                   constraints:

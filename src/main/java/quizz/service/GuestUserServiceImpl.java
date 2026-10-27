@@ -1,5 +1,6 @@
 package quizz.service;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class GuestUserServiceImpl implements GuestUserService {
         guestUser.setNickname(nickname);
         guestUser.setScore(0);
         guestUser.setTotalGamesPlayed(0);
+        guestUser.setCreatedAt(LocalDateTime.now());
         GuestUser savedUser = userRepository.save(guestUser);
         GuestUserDto guestUserDto = guestUserMapper.toDto(savedUser);
 

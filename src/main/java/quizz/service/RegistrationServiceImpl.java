@@ -1,5 +1,6 @@
 package quizz.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,6 +33,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         user.setRoles(new ArrayList<>());
         user.getRoles().add(Role.USER);
         user.setAvatar(Avatar.AVATAR_1);
+        user.setCreatedAt(LocalDateTime.now());
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }
