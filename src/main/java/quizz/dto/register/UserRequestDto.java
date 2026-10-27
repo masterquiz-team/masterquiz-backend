@@ -20,4 +20,5 @@ public class UserRequestDto {
     @NotBlank
     @Size(min = 8)
     private String repeatPassword;
+    private Long guestUserId;
 }

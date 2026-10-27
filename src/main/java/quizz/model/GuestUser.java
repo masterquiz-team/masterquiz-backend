@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
@@ -34,6 +35,8 @@ public class GuestUser implements UserDetails {
     private int score = 0;
     @Column(nullable = false)
     private int totalGamesPlayed = 0;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;

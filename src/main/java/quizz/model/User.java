@@ -11,8 +11,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -50,6 +52,11 @@ public class User implements UserDetails {
     private Level level = Level.LEVEL_1;
     @Column(nullable = false)
     private int totalGamesPlayed = 0;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    @OneToOne
+    @JoinColumn(name = "guest_id")
+    private GuestUser guestUser;
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))

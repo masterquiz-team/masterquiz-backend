@@ -27,6 +27,12 @@ databaseChangeLog:
                     nullable: false
 
               - column:
+                  name: answered_at
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+
+              - column:
                   name: correct_answer
                   type: BIT
                   constraints:
