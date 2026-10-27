@@ -4,13 +4,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.register.UserRequestDto;
 import quizz.dto.register.UserResponseDto;
-import quizz.exception.EntityNotFoundException;
 import quizz.exception.RegisterException;
 import quizz.mapper.UserRegistrationMapper;
 import quizz.model.Avatar;
@@ -35,7 +33,8 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new RegisterException("User with this email already exist.");
         }
 
-        Optional<GuestUser> guestUser = guestUserRepository.findById(userRequestDto.getGuestUserId());
+        Optional<GuestUser> guestUser = guestUserRepository
+                .findById(userRequestDto.getGuestUserId());
 
         User user = userMapper.toModel(userRequestDto);
         user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
