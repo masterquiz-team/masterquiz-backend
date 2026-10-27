@@ -2,7 +2,9 @@ package quizz.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,14 +35,18 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new RegisterException("User with this email already exist.");
         }
 
-        GuestUser guestUser = guestUserRepository.findById(userRequestDto.getGuestUserId())
-                .orElseThrow(() -> new EntityNotFoundException("Guest user with id: "
-                        + userRequestDto.getGuestUserId() + " doesn't exist"));
+        Optional<GuestUser> guestUser = guestUserRepository.findById(userRequestDto.getGuestUserId());
 
         User user = userMapper.toModel(userRequestDto);
         user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         user.setRoles(new ArrayList<>());
-        user.setGuestUser(guestUser);
+
+        if (guestUser.isPresent()) {
+            user.setGuestUser(guestUser.get());
+        } else {
+            user.setGuestUser(null);
+        }
+
         user.getRoles().add(Role.USER);
         user.setAvatar(Avatar.AVATAR_1);
         user.setCreatedAt(LocalDateTime.now());
