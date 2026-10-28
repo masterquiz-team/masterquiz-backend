@@ -33,7 +33,7 @@ public class AnswerServiceImpl implements AnswerService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Question with id: " + answerRequestDto.getQuestionId()
                                 + " doesn't exist"));
-        if (question.getAnswerCounter() >= 4) {
+        if (question.getAnswerCounter() > 4) {
             throw new QuestionAnswerCounterException("The maximum amount of the answers is 4");
         }
         if (!question.isCorrectAnswer() && !answerRequestDto.isCorrect()
