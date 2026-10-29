@@ -679,6 +679,7 @@ public class AnswerAttemptServiceImplTest {
         user.setRoles(Collections.singletonList(Role.USER));
         return Optional.of(user);
     }
+
     private Optional<GuestUser> createGuestUser() {
         GuestUser guestUser = new GuestUser();
         guestUser.setRole(Role.GUEST);
