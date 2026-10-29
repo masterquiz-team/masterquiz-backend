@@ -20,7 +20,7 @@ public class GuestUserServiceImpl implements GuestUserService {
     private final GuestUserRepository userRepository;
     private final GuestUserMapper guestUserMapper;
     private final JwtUtil jwtUtil;
-    private final Random random = new Random();
+    private final Random random;
 
     @Override
     public GuestLoginResponseDto createGuestUser() {
