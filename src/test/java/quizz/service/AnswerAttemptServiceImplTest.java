@@ -719,6 +719,7 @@ public class AnswerAttemptServiceImplTest {
         quizAttempt.setQuiz(quiz);
         return Optional.of(quizAttempt);
     }
+
     private Optional<QuizAttempt> createQuizAttemptForGuest(GuestUser guestUser, Quiz quiz) {
         QuizAttempt quizAttempt = new QuizAttempt();
         quizAttempt.setGuestUser(guestUser);
