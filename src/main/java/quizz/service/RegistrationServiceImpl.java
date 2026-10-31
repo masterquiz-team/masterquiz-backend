@@ -42,12 +42,14 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         if (guestUser.isPresent()) {
             user.setGuestUser(guestUser.get());
+            user.setScore(guestUser.get().getScore());
+            user.setTotalGamesPlayed(guestUser.get().getTotalGamesPlayed());
+            user.setAvatar(guestUser.get().getAvatar());
         } else {
             user.setGuestUser(null);
         }
 
         user.getRoles().add(Role.USER);
-        user.setAvatar(Avatar.AVATAR_1);
         user.setCreatedAt(LocalDateTime.now());
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
