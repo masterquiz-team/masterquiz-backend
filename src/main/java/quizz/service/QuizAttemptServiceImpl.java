@@ -212,7 +212,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
             User unwrappedUser = user.get();
             quizAttempt.setUser(unwrappedUser);
         } else {
-            throw new EntityNotFoundException("User or guest user doesn't exist");
+            throw new EntityNotFoundException("User/GuestUser both exists or doesnt exist");
         }
         return attemptRepository.save(quizAttempt);
     }
