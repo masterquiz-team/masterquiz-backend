@@ -32,8 +32,11 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new RegisterException("User with this email already exist.");
         }
 
-        Optional<GuestUser> guestUser = guestUserRepository
-                .findById(userRequestDto.getGuestUserId());
+        Optional<GuestUser> guestUser = Optional.empty();
+
+        if (userRequestDto.getGuestUserId() != null) {
+            guestUser = guestUserRepository.findById(userRequestDto.getGuestUserId());
+        }
 
         User user = userMapper.toModel(userRequestDto);
         user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
