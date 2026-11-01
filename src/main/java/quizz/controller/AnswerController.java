@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import quizz.dto.answer.AnswerDto;
+import quizz.dto.answer.AnswerDtoWithoutCorrectFieldDto;
 import quizz.dto.answer.AnswerRequestDto;
 import quizz.dto.answer.UpdateAnswerDto;
 import quizz.service.interfaces.AnswerService;
@@ -55,8 +56,9 @@ public class AnswerController {
     @PreAuthorize("hasAnyRole('USER', 'GUEST')")
     @Operation(summary = "Get list of answers",
             description = "Endpoint to get list of answers by question id without correct field")
-    List<AnswerDto> getAnswersByQuestionIdWithoutCorrectField(@PathVariable Long questionId) {
-        return answerService.getAnswersByQuestionId(questionId);
+    List<AnswerDtoWithoutCorrectFieldDto> getAnswersByQuestionIdWithoutCorrectField(
+            @PathVariable Long questionId) {
+        return answerService.getAnswersByQuestionIdWithoutCorrectField(questionId);
     }
 
     @PutMapping
