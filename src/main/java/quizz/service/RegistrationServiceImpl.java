@@ -34,7 +34,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         Optional<GuestUser> guestUser = Optional.empty();
 
-        if (userRequestDto.getGuestUserId() != null)  {
+        if (userRequestDto.getGuestUserId() != null) {
             guestUser = guestUserRepository.findById(userRequestDto.getGuestUserId());
         }
 
