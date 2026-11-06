@@ -29,7 +29,7 @@ public interface UserMapper {
         }
 
         return Arrays.stream(Avatar.values())
-                .filter(avatar -> avatar.getName().equals(avatarId))
+                .filter(avatar -> avatar.getName().equalsIgnoreCase(avatarId))
                 .findFirst()
                 .orElseThrow(() ->
                         new IllegalArgumentException("Invalid avatar id: " + avatarId));

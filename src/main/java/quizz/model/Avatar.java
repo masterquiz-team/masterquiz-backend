@@ -17,6 +17,6 @@ public enum Avatar {
 
     Avatar(String id, String name) {
         this.id = id;
-        this.name = name();
+        this.name = name;
     }
 }
