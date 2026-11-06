@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-test-data
+      author: patryk
+      changes:
+        - sqlFile:
+            path: db.changelog/changes/09-insert-test-data.sql

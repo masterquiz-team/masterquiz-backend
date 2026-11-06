@@ -1,0 +1,101 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-create-user-table-and-roles
+      author: Patryk
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: avatar
+                  type: VARCHAR(255)
+                  defaultValue: AVATAR-1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nickname
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: score
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_games_played
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: level
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: streak
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_time_played
+                  type: DATE
+              - column:
+                  name: created_at
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: guest_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_roles_user_id
+
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: guest_id
+            referencedTableName: guest_users
+            referencedColumnNames: id
+            constraintName: fk_users_guest_id

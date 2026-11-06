@@ -3,6 +3,7 @@ package quizz.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +17,13 @@ public class OpenApiConfig {
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("Car sharing API")
+                        .title("Quiz API")
                         .version("1.0")
-                        .description("Backend application for car sharing"))
+                        .description("Backend application for quiz"))
+                .addSecurityItem(
+                        new SecurityRequirement()
+                                .addList(securitySchemeName)
+                )
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,
                                 new SecurityScheme()
