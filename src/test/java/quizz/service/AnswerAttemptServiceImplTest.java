@@ -1,6 +1,7 @@
 package quizz.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ import quizz.repository.GamesByCategoryResultRepository;
 import quizz.repository.GuestUserRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.UserRepository;
+import quizz.service.interfaces.AchievementEvaluator;
 
 @ExtendWith(MockitoExtension.class)
 public class AnswerAttemptServiceImplTest {
@@ -67,6 +69,9 @@ public class AnswerAttemptServiceImplTest {
 
     @Mock
     private AnswerAttemptMapper answerAttemptMapper;
+
+    @Mock
+    private AchievementEvaluator achievementEvaluator;
 
     @InjectMocks
     private AnswerAttemptServiceImpl answerAttemptService;

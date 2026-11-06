@@ -9,4 +9,6 @@ public class AchievementDto {
     private String title;
     private String description;
     private String achievementImage;
+    private String rarity;
+    private String achievementType;
 }

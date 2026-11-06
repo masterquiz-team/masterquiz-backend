@@ -30,6 +30,7 @@ import quizz.repository.QuestionRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.QuizRepository;
 import quizz.repository.UserRepository;
+import quizz.service.interfaces.AchievementEvaluator;
 import quizz.service.interfaces.QuizAttemptService;
 
 @Service
@@ -43,6 +44,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
     private final QuestionRepository questionRepository;
     private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
     private final GuestUserRepository guestUserRepository;
+    private final AchievementEvaluator achievementEvaluator;
 
     @Override
     @Transactional
@@ -165,7 +167,6 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
                             });
 
             result.setGamesPlayed(result.getGamesPlayed() + 1);
-
         } else {
 
             if (quizAttempt.getGuestUser() == null
@@ -193,6 +194,20 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
         }
         quizAttempt.setFinishedAt(LocalDateTime.now());
         quizAttempt.setStatus(Status.FINISHED);
+
+        if (user.isPresent()) {
+            int correctAnswers = attemptRepository
+                    .countByQuizAttemptIdAndCorrectAnswerTrue(quizAttempt.getId());
+
+            achievementEvaluator.checkFirstQuizAchievement(username);
+            achievementEvaluator.checkFiveCategoriesAchievement(username);
+            achievementEvaluator.checkFiveQuizzesOnHardLevelAchievement(username);
+            achievementEvaluator.checkFiftyQuizzesAchievement(username);
+            achievementEvaluator.checkPlayThreeDaysInARow(username);
+            achievementEvaluator.checkEightOutOfTenAchievement(username, correctAnswers);
+            achievementEvaluator.checkPerfectScoreAchievement(username, correctAnswers);
+        }
+
         return quizAttemptMapper.toDto(quizAttempt);
     }
 

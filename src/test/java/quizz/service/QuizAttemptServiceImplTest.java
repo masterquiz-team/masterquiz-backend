@@ -1,6 +1,7 @@
 package quizz.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -41,6 +42,7 @@ import quizz.repository.QuestionRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.QuizRepository;
 import quizz.repository.UserRepository;
+import quizz.service.interfaces.AchievementEvaluator;
 
 @ExtendWith(MockitoExtension.class)
 public class QuizAttemptServiceImplTest {
@@ -63,6 +65,8 @@ public class QuizAttemptServiceImplTest {
     private GamesByCategoryResultRepository gamesByCategoryResultRepository;
     @Mock
     private GuestUserRepository guestUserRepository;
+    @Mock
+    private AchievementEvaluator achievementEvaluator;
     @InjectMocks
     private QuizAttemptServiceImpl quizAttemptService;
 
@@ -503,6 +507,7 @@ public class QuizAttemptServiceImplTest {
         when(guestUserRepository.findByNickname(USERNAME)).thenReturn(Optional.empty());
         when(gamesByCategoryResultRepository.findByCategoryIdAndUserId(
                 category.getId(), user.get().getId())).thenReturn(result);
+        doNothing().when(achievementEvaluator).checkFirstQuizAchievement(USERNAME);
         when(quizAttemptMapper.toDto(quizAttempt.get())).thenReturn(expected);
 
         //when

@@ -28,6 +28,7 @@ import quizz.repository.GamesByCategoryResultRepository;
 import quizz.repository.GuestUserRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.UserRepository;
+import quizz.service.interfaces.AchievementEvaluator;
 import quizz.service.interfaces.AnswerAttemptService;
 
 @Service
@@ -40,6 +41,7 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
     private final AnswerAttemptMapper answerAttemptMapper;
     private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
     private final GuestUserRepository guestUserRepository;
+    private final AchievementEvaluator achievementEvaluator;
 
     @Override
     @Transactional
@@ -89,8 +91,6 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
         answerAttempt.setCorrectAnswer(answer.isCorrect());
         answerAttempt.setQuizAttempt(quizAttempt);
 
-        AnswerAttempt savedAttempt = answerAttemptRepository.save(answerAttempt);
-
         if (user.isPresent()) {
             User unwrappedUser = user.get();
             GamesByCategoryResult gamesByCategoryResult = gamesByCategoryResultRepository
@@ -130,11 +130,17 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
             }
         }
 
+        if (user.isPresent()) {
+            achievementEvaluator.checkAnswerFiveQuestionsCorrectlyInARow(username);
+        }
+
         List<Long> answersIds = answerRepository
                 .findByQuestionIdAndCorrectTrue(question.getId())
                 .stream()
                 .map(Answer::getId)
                 .toList();
+
+        AnswerAttempt savedAttempt = answerAttemptRepository.save(answerAttempt);
 
         AnswerAttemptDto answerAttemptDto = answerAttemptMapper.toDto(savedAttempt);
         answerAttemptDto.setQuestionId(question.getId());
