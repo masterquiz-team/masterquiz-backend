@@ -1,13 +1,19 @@
 package quizz.service.interfaces;
 
-import quizz.model.User;
-
 public interface AchievementEvaluator {
-    void didUserFinishedFirstQuiz(User user);
+    void checkFirstQuizAchievement(String email);
 
-    void didUserGotPerfectScore(User user);
+    void checkPerfectScoreAchievement(String email, int score);
 
-    void didUserPlayed5QuizzesWithDifferentCategories(User user);
+    void checkFiveCategoriesAchievement(String email);
 
-    void didUserGot8OutOf10Points(User user);
+    void checkEightOutOfTenAchievement(String email, int score);
+
+    void checkFiveQuizzesOnHardLevelAchievement(String email);
+
+    void checkFiftyQuizzesAchievement(String email);
+
+    void checkPlayThreeDaysInARow(String email);
+
+    void checkAnswerFiveQuestionsCorrectlyInARow(String email);
 }
