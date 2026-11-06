@@ -25,3 +25,5 @@ databaseChangeLog:
       file: db.changelog/changes/12-create-achievement-table.yaml
   - include:
       file: db.changelog/changes/13-create-user-achievement-table.yaml
+  - include:
+      file: db.changelog/changes/14-insert-achievements.sql
