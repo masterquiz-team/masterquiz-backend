@@ -29,10 +29,12 @@ public class Achievement {
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
     private String achievementImage;
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Rarity rarity;
 
     @Override
     public boolean equals(Object o) {

@@ -35,3 +35,8 @@ databaseChangeLog:
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
+              - column:
+                  name: rarity
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
