@@ -21,3 +21,7 @@ databaseChangeLog:
       file: db.changelog/changes/09-insert-test-data.yaml
   - include:
       file: db.changelog/changes/10-create-games-by-category-result-table.yaml
+  - include:
+      file: db.changelog/changes/12-create-achievement-table.yaml
+  - include:
+      file: db.changelog/changes/13-create-user-achievement-table.yaml
