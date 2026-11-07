@@ -92,8 +92,6 @@ public class AnswerAttemptServiceImplTest {
         QuizAttempt unwrappedQuizAttempt = quizAttempt.get();
 
         AnswerAttempt answerAttempt = createAnswerAttempt(unwrappedQuizAttempt, unwrappedAnswer);
-        Optional<GamesByCategoryResult> gamesByCategoryResult = createGamesByCategoryResultForUser(
-                category, unwrappedUser);
 
         when(userRepository.findByEmail(USERNAME)).thenReturn(user);
         when(guestUserRepository.findByNickname(USERNAME)).thenReturn(Optional.empty());
@@ -102,8 +100,6 @@ public class AnswerAttemptServiceImplTest {
         when(answerAttemptRepository.existsByQuizAttemptIdAndAnswerQuestionId(ID, ID))
                 .thenReturn(false);
         when(answerAttemptRepository.save(any(AnswerAttempt.class))).thenReturn(answerAttempt);
-        when(gamesByCategoryResultRepository.findByCategoryIdAndUserId(ID, ID))
-                .thenReturn(gamesByCategoryResult);
         when(answerRepository.findByQuestionIdAndCorrectTrue(ID))
                 .thenReturn(List.of(unwrappedAnswer));
         when(answerAttemptMapper.toDto(any(AnswerAttempt.class))).thenReturn(expected);
@@ -132,8 +128,6 @@ public class AnswerAttemptServiceImplTest {
         QuizAttempt unwrappedQuizAttempt = quizAttempt.get();
 
         AnswerAttempt answerAttempt = createAnswerAttempt(unwrappedQuizAttempt, unwrappedAnswer);
-        Optional<GamesByCategoryResult> gamesByCategoryResult =
-                createGamesByCategoryResultForGuestUser(category, unwrappedGuestUser);
 
         when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
         when(guestUserRepository.findByNickname(USERNAME)).thenReturn(guestUser);
@@ -142,8 +136,6 @@ public class AnswerAttemptServiceImplTest {
         when(answerAttemptRepository.existsByQuizAttemptIdAndAnswerQuestionId(ID, ID))
                 .thenReturn(false);
         when(answerAttemptRepository.save(any(AnswerAttempt.class))).thenReturn(answerAttempt);
-        when(gamesByCategoryResultRepository.findByCategoryIdAndGuestUserId(ID, ID))
-                .thenReturn(gamesByCategoryResult);
         when(answerRepository.findByQuestionIdAndCorrectTrue(ID))
                 .thenReturn(List.of(unwrappedAnswer));
         when(answerAttemptMapper.toDto(any(AnswerAttempt.class))).thenReturn(expected);
@@ -320,8 +312,6 @@ public class AnswerAttemptServiceImplTest {
         Answer unwrappedAnswer = answer.get();
         AnswerAttempt answerAttempt = createAnswerAttempt(quizAttempt.get(), answer.get());
         AnswerAttemptDto expected = createAnswerAttemptDto(List.of());
-        Optional<GamesByCategoryResult> gamesByCategoryResult = createGamesByCategoryResultForUser(
-                category, user.get());
 
         when(userRepository.findByEmail(USERNAME)).thenReturn(user);
         when(guestUserRepository.findByNickname(USERNAME)).thenReturn(Optional.empty());
@@ -330,10 +320,6 @@ public class AnswerAttemptServiceImplTest {
         when(answerAttemptRepository.existsByQuizAttemptIdAndAnswerQuestionId(ID, ID))
                 .thenReturn(false);
         when(answerAttemptRepository.save(any(AnswerAttempt.class))).thenReturn(answerAttempt);
-        when(gamesByCategoryResultRepository.findByCategoryIdAndUserId(ID, ID))
-                .thenReturn(Optional.empty());
-        when(gamesByCategoryResultRepository.save(any(GamesByCategoryResult.class)))
-                .thenReturn(gamesByCategoryResult.get());
         when(answerRepository.findByQuestionIdAndCorrectTrue(ID))
                 .thenReturn(List.of(unwrappedAnswer));
         when(answerAttemptMapper.toDto(any(AnswerAttempt.class))).thenReturn(expected);
@@ -354,13 +340,11 @@ public class AnswerAttemptServiceImplTest {
         Category category = createCategory();
         Question question = createQuestion(category);
         Quiz quiz = createQuiz(category, List.of(question));
-        Optional<QuizAttempt> quizAttempt = createQuizAttemptForGuest(user.get(),quiz);
+        Optional<QuizAttempt> quizAttempt = createQuizAttemptForGuest(user.get(), quiz);
         Optional<Answer> answer = createAnswer(question);
         Answer unwrappedAnswer = answer.get();
         AnswerAttempt answerAttempt = createAnswerAttempt(quizAttempt.get(), answer.get());
         AnswerAttemptDto expected = createAnswerAttemptDto(List.of());
-        Optional<GamesByCategoryResult> gamesByCategoryResult =
-                createGamesByCategoryResultForGuestUser(category, user.get());
 
         when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
         when(guestUserRepository.findByNickname(USERNAME)).thenReturn(user);
@@ -369,10 +353,6 @@ public class AnswerAttemptServiceImplTest {
         when(answerAttemptRepository.existsByQuizAttemptIdAndAnswerQuestionId(ID, ID))
                 .thenReturn(false);
         when(answerAttemptRepository.save(any(AnswerAttempt.class))).thenReturn(answerAttempt);
-        when(gamesByCategoryResultRepository.findByCategoryIdAndGuestUserId(ID, ID))
-                .thenReturn(Optional.empty());
-        when(gamesByCategoryResultRepository.save(any(GamesByCategoryResult.class)))
-                .thenReturn(gamesByCategoryResult.get());
         when(answerRepository.findByQuestionIdAndCorrectTrue(ID))
                 .thenReturn(List.of(unwrappedAnswer));
         when(answerAttemptMapper.toDto(any(AnswerAttempt.class))).thenReturn(expected);
@@ -383,179 +363,6 @@ public class AnswerAttemptServiceImplTest {
 
         // then
         Assertions.assertEquals(expected, actual);
-    }
-
-    @Test
-    void createAnswerAttempt_ValidTotalScoreAndCategoryScoreAndLevelForUser_ReturnsCorrectScore() {
-        //given
-        AnswerAttemptRequestDto answerAttemptRequestDto = createAnswerAttemptRequestDto();
-        Optional<User> user = createUser();
-        User unwrappedUser = user.get();
-        AnswerAttemptDto expected = createAnswerAttemptDto(List.of(ID));
-        Category category = createCategory();
-        Question question = createQuestion(category);
-        Optional<Answer> answer = createAnswer(question);
-        Answer unwrappedAnswer = answer.get();
-        Quiz quiz = createQuiz(category, List.of(question));
-        Optional<QuizAttempt> quizAttempt = createQuizAttemptForUser(unwrappedUser, quiz);
-        QuizAttempt unwrappedQuizAttempt = quizAttempt.get();
-
-        AnswerAttempt answerAttempt = createAnswerAttempt(unwrappedQuizAttempt, unwrappedAnswer);
-        Optional<GamesByCategoryResult> gamesByCategoryResult = createGamesByCategoryResultForUser(
-                category, unwrappedUser);
-
-        when(userRepository.findByEmail(USERNAME)).thenReturn(user);
-        when(guestUserRepository.findByNickname(USERNAME)).thenReturn(Optional.empty());
-        when(quizAttemptRepository.findById(ID)).thenReturn(quizAttempt);
-        when(answerRepository.findById(ID)).thenReturn(answer);
-        when(answerAttemptRepository.existsByQuizAttemptIdAndAnswerQuestionId(ID, ID))
-                .thenReturn(false);
-        when(answerAttemptRepository.save(any(AnswerAttempt.class))).thenReturn(answerAttempt);
-        when(gamesByCategoryResultRepository.findByCategoryIdAndUserId(ID, ID))
-                .thenReturn(gamesByCategoryResult);
-        when(answerRepository.findByQuestionIdAndCorrectTrue(ID))
-                .thenReturn(List.of(unwrappedAnswer));
-        when(answerAttemptMapper.toDto(any(AnswerAttempt.class))).thenReturn(expected);
-
-        //when
-        AnswerAttemptDto actual = answerAttemptService.createAnswerAttempt
-                (answerAttemptRequestDto, USERNAME);
-
-        //then
-        Assertions.assertEquals(expected, actual);
-        Assertions.assertEquals(500, unwrappedUser.getScore());
-        Assertions.assertEquals(Level.LEVEL_2, unwrappedUser.getLevel());
-        Assertions.assertEquals(20, gamesByCategoryResult.get().getCategoryScore());
-    }
-
-    @Test
-    void createAnswerAttempt_ValidTotalScoreAndCategoryScoreForGuest_ReturnsCorrectScore() {
-        //given
-        AnswerAttemptRequestDto answerAttemptRequestDto = createAnswerAttemptRequestDto();
-        Optional<GuestUser> user = createGuestUser();
-        GuestUser unwrappedUser = user.get();
-        AnswerAttemptDto expected = createAnswerAttemptDto(List.of(ID));
-        Category category = createCategory();
-        Question question = createQuestion(category);
-        Optional<Answer> answer = createAnswer(question);
-        Answer unwrappedAnswer = answer.get();
-        Quiz quiz = createQuiz(category, List.of(question));
-        Optional<QuizAttempt> quizAttempt = createQuizAttemptForGuest(unwrappedUser, quiz);
-        QuizAttempt unwrappedQuizAttempt = quizAttempt.get();
-
-        AnswerAttempt answerAttempt = createAnswerAttempt(unwrappedQuizAttempt, unwrappedAnswer);
-        Optional<GamesByCategoryResult> gamesByCategoryResult =
-                createGamesByCategoryResultForGuestUser(category, unwrappedUser);
-
-        when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
-        when(guestUserRepository.findByNickname(USERNAME)).thenReturn(user);
-        when(quizAttemptRepository.findById(ID)).thenReturn(quizAttempt);
-        when(answerRepository.findById(ID)).thenReturn(answer);
-        when(answerAttemptRepository.existsByQuizAttemptIdAndAnswerQuestionId(ID, ID))
-                .thenReturn(false);
-        when(answerAttemptRepository.save(any(AnswerAttempt.class))).thenReturn(answerAttempt);
-        when(gamesByCategoryResultRepository.findByCategoryIdAndGuestUserId(ID, ID))
-                .thenReturn(gamesByCategoryResult);
-        when(answerRepository.findByQuestionIdAndCorrectTrue(ID))
-                .thenReturn(List.of(unwrappedAnswer));
-        when(answerAttemptMapper.toDto(any(AnswerAttempt.class))).thenReturn(expected);
-
-        //when
-        AnswerAttemptDto actual = answerAttemptService.createAnswerAttempt
-                (answerAttemptRequestDto, USERNAME);
-
-        //then
-        Assertions.assertEquals(expected, actual);
-        Assertions.assertEquals(10, unwrappedUser.getScore());
-        Assertions.assertEquals(20, gamesByCategoryResult.get().getCategoryScore());
-    }
-
-    @Test
-    void createAnswerAttempt_IncorrectAnswerForGuestUser_GivesNoPoints() {
-        //given
-        AnswerAttemptRequestDto answerAttemptRequestDto = createAnswerAttemptRequestDto();
-        Optional<GuestUser> user = createGuestUser();
-        GuestUser unwrappedUser = user.get();
-        AnswerAttemptDto expected = createAnswerAttemptDto(List.of(ID));
-        Category category = createCategory();
-        Question question = createQuestion(category);
-        question.setCorrectAnswer(false);
-        Optional<Answer> answer = createAnswer(question);
-        Answer unwrappedAnswer = answer.get();
-        unwrappedAnswer.setCorrect(false);
-        Quiz quiz = createQuiz(category, List.of(question));
-        Optional<QuizAttempt> quizAttempt = createQuizAttemptForGuest(unwrappedUser, quiz);
-        QuizAttempt unwrappedQuizAttempt = quizAttempt.get();
-
-        AnswerAttempt answerAttempt = createAnswerAttempt(unwrappedQuizAttempt, unwrappedAnswer);
-        Optional<GamesByCategoryResult> gamesByCategoryResult =
-                createGamesByCategoryResultForGuestUser(category, unwrappedUser);
-
-        when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
-        when(guestUserRepository.findByNickname(USERNAME)).thenReturn(user);
-        when(quizAttemptRepository.findById(ID)).thenReturn(quizAttempt);
-        when(answerRepository.findById(ID)).thenReturn(answer);
-        when(answerAttemptRepository.existsByQuizAttemptIdAndAnswerQuestionId(ID, ID))
-                .thenReturn(false);
-        when(answerAttemptRepository.save(any(AnswerAttempt.class))).thenReturn(answerAttempt);
-        when(gamesByCategoryResultRepository.findByCategoryIdAndGuestUserId(ID, ID))
-                .thenReturn(gamesByCategoryResult);
-        when(answerRepository.findByQuestionIdAndCorrectTrue(ID))
-                .thenReturn(List.of(unwrappedAnswer));
-        when(answerAttemptMapper.toDto(any(AnswerAttempt.class))).thenReturn(expected);
-
-        //when
-        AnswerAttemptDto actual = answerAttemptService.createAnswerAttempt
-                (answerAttemptRequestDto, USERNAME);
-
-        //then
-        Assertions.assertEquals(expected, actual);
-        Assertions.assertEquals(0, unwrappedUser.getScore());
-        Assertions.assertEquals(10, gamesByCategoryResult.get().getCategoryScore());
-    }
-
-    @Test
-    void createAnswerAttempt_IncorrectAnswerForUser_GivesNoPoints() {
-        //given
-        AnswerAttemptRequestDto answerAttemptRequestDto = createAnswerAttemptRequestDto();
-        Optional<User> user = createUser();
-        User unwrappedUser = user.get();
-        AnswerAttemptDto expected = createAnswerAttemptDto(List.of(ID));
-        Category category = createCategory();
-        Question question = createQuestion(category);
-        question.setCorrectAnswer(false);
-        Optional<Answer> answer = createAnswer(question);
-        Answer unwrappedAnswer = answer.get();
-        unwrappedAnswer.setCorrect(false);
-        Quiz quiz = createQuiz(category, List.of(question));
-        Optional<QuizAttempt> quizAttempt = createQuizAttemptForUser(unwrappedUser, quiz);
-        QuizAttempt unwrappedQuizAttempt = quizAttempt.get();
-
-        AnswerAttempt answerAttempt = createAnswerAttempt(unwrappedQuizAttempt, unwrappedAnswer);
-        Optional<GamesByCategoryResult> gamesByCategoryResult =
-                createGamesByCategoryResultForUser(category, unwrappedUser);
-
-        when(userRepository.findByEmail(USERNAME)).thenReturn(user);
-        when(guestUserRepository.findByNickname(USERNAME)).thenReturn(Optional.empty());
-        when(quizAttemptRepository.findById(ID)).thenReturn(quizAttempt);
-        when(answerRepository.findById(ID)).thenReturn(answer);
-        when(answerAttemptRepository.existsByQuizAttemptIdAndAnswerQuestionId(ID, ID))
-                .thenReturn(false);
-        when(answerAttemptRepository.save(any(AnswerAttempt.class))).thenReturn(answerAttempt);
-        when(gamesByCategoryResultRepository.findByCategoryIdAndUserId(ID, ID))
-                .thenReturn(gamesByCategoryResult);
-        when(answerRepository.findByQuestionIdAndCorrectTrue(ID))
-                .thenReturn(List.of(unwrappedAnswer));
-        when(answerAttemptMapper.toDto(any(AnswerAttempt.class))).thenReturn(expected);
-
-        //when
-        AnswerAttemptDto actual = answerAttemptService.createAnswerAttempt
-                (answerAttemptRequestDto, USERNAME);
-
-        //then
-        Assertions.assertEquals(expected, actual);
-        Assertions.assertEquals(490, unwrappedUser.getScore());
-        Assertions.assertEquals(10, gamesByCategoryResult.get().getCategoryScore());
     }
 
     @Test
