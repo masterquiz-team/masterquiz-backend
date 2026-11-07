@@ -18,6 +18,7 @@ import quizz.model.Category;
 import quizz.model.Difficulty;
 import quizz.model.GamesByCategoryResult;
 import quizz.model.GuestUser;
+import quizz.model.Level;
 import quizz.model.Question;
 import quizz.model.Quiz;
 import quizz.model.QuizAttempt;
@@ -131,6 +132,10 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
         Optional<User> user = userRepository.findByEmail(username);
         Optional<GuestUser> guestUser = guestUserRepository.findByNickname(username);
 
+        int correctAnswers = attemptRepository
+                .countByQuizAttemptIdAndCorrectAnswerTrue(quizAttempt.getId());
+        int finalScore = correctAnswers * quizAttempt.getQuiz().getDifficulty().getPoints();
+
         if (user.isPresent() == guestUser.isPresent()) {
             throw new UnauthorizedAccessException("Invalid user identity");
         }
@@ -142,7 +147,11 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
                 throw new UnauthorizedAccessException("You have no permission");
             }
             unwrappedUser.setTotalGamesPlayed(unwrappedUser.getTotalGamesPlayed() + 1);
+            unwrappedUser.setScore(unwrappedUser.getScore() + finalScore);
+            Level level = Level.fromScore(unwrappedUser.getScore());
+            unwrappedUser.setLevel(level);
             LocalDate today = LocalDate.now();
+
             if (unwrappedUser.getStreak() == 0) {
                 unwrappedUser.setStreak(1);
                 unwrappedUser.setLastTimePlayed(LocalDate.now());
@@ -153,6 +162,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
                 unwrappedUser.setStreak(1);
                 unwrappedUser.setLastTimePlayed(LocalDate.now());
             }
+
             GamesByCategoryResult result = gamesByCategoryResultRepository
                     .findByCategoryIdAndUserId(
                             quizAttempt.getQuiz().getCategory().getId(),
@@ -167,14 +177,16 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
                             });
 
             result.setGamesPlayed(result.getGamesPlayed() + 1);
+            result.setCategoryScore(result.getCategoryScore() + finalScore);
         } else {
-
             if (quizAttempt.getGuestUser() == null
                     || !guestUser.get().getId().equals(quizAttempt.getGuestUser().getId())) {
                 throw new UnauthorizedAccessException("You have no permission");
             }
+
             GuestUser unwrappedGuestUser = guestUser.get();
             unwrappedGuestUser.setTotalGamesPlayed(unwrappedGuestUser.getTotalGamesPlayed() + 1);
+            unwrappedGuestUser.setScore(unwrappedGuestUser.getScore() + finalScore);
 
             GamesByCategoryResult result = gamesByCategoryResultRepository
                     .findByCategoryIdAndGuestUserId(
@@ -191,14 +203,13 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
                             });
 
             result.setGamesPlayed(result.getGamesPlayed() + 1);
+            result.setCategoryScore(result.getCategoryScore() + finalScore);
         }
+
         quizAttempt.setFinishedAt(LocalDateTime.now());
         quizAttempt.setStatus(Status.FINISHED);
 
         if (user.isPresent()) {
-            int correctAnswers = attemptRepository
-                    .countByQuizAttemptIdAndCorrectAnswerTrue(quizAttempt.getId());
-
             achievementEvaluator.checkFirstQuizAchievement(username);
             achievementEvaluator.checkFiveCategoriesAchievement(username);
             achievementEvaluator.checkFiveQuizzesOnHardLevelAchievement(username);
