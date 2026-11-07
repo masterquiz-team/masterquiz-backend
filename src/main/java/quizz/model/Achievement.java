@@ -35,6 +35,9 @@ public class Achievement {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Rarity rarity;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AchievementType achievementType;
 
     @Override
     public boolean equals(Object o) {

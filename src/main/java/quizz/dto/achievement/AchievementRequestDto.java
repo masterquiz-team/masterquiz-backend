@@ -1,6 +1,7 @@
 package quizz.dto.achievement;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,4 +17,11 @@ public class AchievementRequestDto {
     private String description;
     @NotBlank
     private String achievementImage;
+    @NotBlank
+    private String rarity;
+    @NotBlank
+    @Pattern(regexp = "^First-Steps\\d+$",
+            message = "Achievement type has to be same as title with "
+                    + "- as a space. Example: First-Steps")
+    private String achievementType;
 }

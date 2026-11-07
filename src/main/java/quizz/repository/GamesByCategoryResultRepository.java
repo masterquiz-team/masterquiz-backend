@@ -19,6 +19,14 @@ public interface GamesByCategoryResultRepository extends JpaRepository<
 
     List<GamesByCategoryResult> findAllByUserId(Long id);
 
+    @Query("""
+            SELECT COUNT(DISTINCT r.category.id)
+            FROM GamesByCategoryResult r
+            WHERE r.user.id = :userId
+            AND r.gamesPlayed > 0
+            """)
+    long countDistinctCategoriesByUserId(Long userId);
+
     @Query("FROM GamesByCategoryResult r "
             + "WHERE r.category.id = :categoryId "
             + "ORDER BY r.categoryScore DESC, r.user.nickname")

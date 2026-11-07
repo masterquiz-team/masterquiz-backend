@@ -15,9 +15,7 @@ import quizz.exception.UnauthorizedAccessException;
 import quizz.mapper.AnswerAttemptMapper;
 import quizz.model.Answer;
 import quizz.model.AnswerAttempt;
-import quizz.model.GamesByCategoryResult;
 import quizz.model.GuestUser;
-import quizz.model.Level;
 import quizz.model.Question;
 import quizz.model.QuizAttempt;
 import quizz.model.Status;
@@ -28,6 +26,7 @@ import quizz.repository.GamesByCategoryResultRepository;
 import quizz.repository.GuestUserRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.UserRepository;
+import quizz.service.interfaces.AchievementEvaluator;
 import quizz.service.interfaces.AnswerAttemptService;
 
 @Service
@@ -40,6 +39,7 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
     private final AnswerAttemptMapper answerAttemptMapper;
     private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
     private final GuestUserRepository guestUserRepository;
+    private final AchievementEvaluator achievementEvaluator;
 
     @Override
     @Transactional
@@ -65,14 +65,6 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
                 .orElseThrow(() -> new EntityNotFoundException("Answer with id: "
                         + answerAttemptRequestDto.getAnswerId() + " doesn't exist"));
 
-        Question question = quizAttempt.getQuiz().getListOfQuestions().stream()
-                .filter(q -> answer.getQuestion().getId().equals(q.getId()))
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Answer doesn't belong to any question"));
-
-        int questionPoints = question.getDifficulty().getPoints();
-
         boolean alreadyAnswered = answerAttemptRepository
                 .existsByQuizAttemptIdAndAnswerQuestionId(
                         quizAttempt.getId(),
@@ -89,52 +81,23 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
         answerAttempt.setCorrectAnswer(answer.isCorrect());
         answerAttempt.setQuizAttempt(quizAttempt);
 
-        AnswerAttempt savedAttempt = answerAttemptRepository.save(answerAttempt);
-
         if (user.isPresent()) {
-            User unwrappedUser = user.get();
-            GamesByCategoryResult gamesByCategoryResult = gamesByCategoryResultRepository
-                    .findByCategoryIdAndUserId(
-                            question.getCategory().getId(), unwrappedUser.getId())
-                    .orElseGet(() -> {
-                        GamesByCategoryResult categoryResult = new GamesByCategoryResult();
-                        categoryResult.setCategory(question.getCategory());
-                        categoryResult.setUser(unwrappedUser);
-                        return gamesByCategoryResultRepository.save(categoryResult);
-                    });
-            if (answer.isCorrect()) {
-                unwrappedUser.setScore(unwrappedUser.getScore() + questionPoints);
-                Level level = Level.fromScore(unwrappedUser.getScore());
-                unwrappedUser.setLevel(level);
-                gamesByCategoryResult.setCategoryScore(gamesByCategoryResult.getCategoryScore()
-                        + questionPoints);
-            }
+            achievementEvaluator.checkAnswerFiveQuestionsCorrectlyInARow(username);
         }
 
-        if (guestUser.isPresent()) {
-            GuestUser unwrappedGuestUser = guestUser.get();
-            GamesByCategoryResult gamesByCategoryResult = gamesByCategoryResultRepository
-                    .findByCategoryIdAndGuestUserId(
-                            question.getCategory().getId(),
-                            unwrappedGuestUser.getId())
-                    .orElseGet(() -> {
-                        GamesByCategoryResult categoryResult = new GamesByCategoryResult();
-                        categoryResult.setCategory(question.getCategory());
-                        categoryResult.setGuestUser(unwrappedGuestUser);
-                        return gamesByCategoryResultRepository.save(categoryResult);
-                    });
-            if (answer.isCorrect()) {
-                unwrappedGuestUser.setScore(unwrappedGuestUser.getScore() + questionPoints);
-                gamesByCategoryResult.setCategoryScore(gamesByCategoryResult.getCategoryScore()
-                        + questionPoints);
-            }
-        }
+        Question question = quizAttempt.getQuiz().getListOfQuestions().stream()
+                .filter(q -> answer.getQuestion().getId().equals(q.getId()))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Answer doesn't belong to any question"));
 
         List<Long> answersIds = answerRepository
                 .findByQuestionIdAndCorrectTrue(question.getId())
                 .stream()
                 .map(Answer::getId)
                 .toList();
+
+        AnswerAttempt savedAttempt = answerAttemptRepository.save(answerAttempt);
 
         AnswerAttemptDto answerAttemptDto = answerAttemptMapper.toDto(savedAttempt);
         answerAttemptDto.setQuestionId(question.getId());
