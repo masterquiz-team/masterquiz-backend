@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import quizz.dto.register.UserRequestDto;
 import quizz.dto.register.UserResponseDto;
+import quizz.exception.EntityNotFoundException;
 import quizz.exception.RegisterException;
 import quizz.mapper.UserRegistrationMapper;
 import quizz.model.Avatar;
@@ -72,18 +73,31 @@ public class RegistrationServiceImplTest {
     }
 
     @Test
+    void register_InvalidGuestUserId_Throws404() {
+        Optional<User> user = createUser();
+        UserRequestDto userRequestDto = createUserRequestDto();
+
+        when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
+        when(guestUserRepository.findById(ID)).thenReturn(Optional.empty());
+
+        //when & then
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> registrationService.register(userRequestDto));
+    }
+
+    @Test
     void register_ValidRequestDtoButEmptyGuest_ReturnsUserResponseDto() {
         //given
         Optional<User> user = createUser();
         User unwrappedUser = user.get();
         UserRequestDto userRequestDto = createUserRequestDto();
+        userRequestDto.setGuestUserId(null);
         UserResponseDto expected = createuserResponseDto();
 
         when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
-        when(guestUserRepository.findById(ID)).thenReturn(Optional.empty());
-        when(userRegistrationMapper.toModel(userRequestDto)).thenReturn(user.get());
+        when(userRegistrationMapper.toModel(userRequestDto)).thenReturn(unwrappedUser);
         when(passwordEncoder.encode(userRequestDto.getPassword())).thenReturn("strongpassword");
-        when(userRepository.save(any(User.class))).thenReturn(user.get());
+        when(userRepository.save(any(User.class))).thenReturn(unwrappedUser);
         when(userRegistrationMapper.toDto(user.get())).thenReturn(expected);
 
         //when

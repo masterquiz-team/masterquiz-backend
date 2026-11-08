@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.register.UserRequestDto;
 import quizz.dto.register.UserResponseDto;
+import quizz.exception.EntityNotFoundException;
 import quizz.exception.RegisterException;
 import quizz.mapper.UserRegistrationMapper;
 import quizz.model.GuestUser;
@@ -35,7 +36,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         Optional<GuestUser> guestUser = Optional.empty();
 
         if (userRequestDto.getGuestUserId() != null) {
-            guestUser = guestUserRepository.findById(userRequestDto.getGuestUserId());
+            guestUser = Optional.of(guestUserRepository.findById(
+                    userRequestDto.getGuestUserId()).orElseThrow(
+                        () -> new EntityNotFoundException("Guest user with id: "
+                            + userRequestDto.getGuestUserId() + " doesn't exist")));
         }
 
         User user = userMapper.toModel(userRequestDto);
