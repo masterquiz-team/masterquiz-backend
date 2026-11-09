@@ -21,7 +21,7 @@ import quizz.service.interfaces.UserAchievementService;
 public class UserAchievementController {
     private final UserAchievementService userAchievementService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{achievementId}")
     @Operation(summary = "Get achievement", description = "Get achievement by id")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public UserAchievementDto getUserAchievement(

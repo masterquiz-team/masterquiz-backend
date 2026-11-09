@@ -24,5 +24,5 @@ public interface UserAchievementRepository extends JpaRepository<UserAchievement
             JOIN FETCH ua.user
             WHERE ua.user.id = :userId
             """)
-    List<UserAchievement> findAllByUserId(Long id);
+    List<UserAchievement> findAllByUserId(Long userId);
 }
