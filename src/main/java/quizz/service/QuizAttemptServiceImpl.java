@@ -24,6 +24,7 @@ import quizz.model.Quiz;
 import quizz.model.QuizAttempt;
 import quizz.model.Status;
 import quizz.model.User;
+import quizz.repository.AnswerAttemptRepository;
 import quizz.repository.CategoryRepository;
 import quizz.repository.GamesByCategoryResultRepository;
 import quizz.repository.GuestUserRepository;
@@ -46,6 +47,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
     private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
     private final GuestUserRepository guestUserRepository;
     private final AchievementEvaluator achievementEvaluator;
+    private final AnswerAttemptRepository answerAttemptRepository;
 
     @Override
     @Transactional
@@ -132,8 +134,9 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
         Optional<User> user = userRepository.findByEmail(username);
         Optional<GuestUser> guestUser = guestUserRepository.findByNickname(username);
 
-        int correctAnswers = attemptRepository
+        int correctAnswers = answerAttemptRepository
                 .countByQuizAttemptIdAndCorrectAnswerTrue(quizAttempt.getId());
+
         int finalScore = correctAnswers * quizAttempt.getQuiz().getDifficulty().getPoints();
 
         if (user.isPresent() == guestUser.isPresent()) {
