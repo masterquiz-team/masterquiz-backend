@@ -9,7 +9,6 @@ import quizz.model.Achievement;
 import quizz.model.AchievementType;
 import quizz.model.AnswerAttempt;
 import quizz.model.Difficulty;
-import quizz.model.Question;
 import quizz.model.QuizAttempt;
 import quizz.model.Status;
 import quizz.model.User;
