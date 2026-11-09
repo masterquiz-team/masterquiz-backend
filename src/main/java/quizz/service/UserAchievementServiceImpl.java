@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.userachievement.UserAchievementDto;
-import quizz.exception.EntityFoundException;
 import quizz.exception.EntityNotFoundException;
 import quizz.exception.UnauthorizedAccessException;
 import quizz.mapper.UserAchievementMapper;
@@ -60,8 +59,7 @@ public class UserAchievementServiceImpl implements UserAchievementService {
 
         if (userAchievementRepository.findByUserIdAndAchievementId(user.getId(), achievementId)
                 .isPresent()) {
-            throw new EntityFoundException("User already has: "
-                    + achievement.getTitle() + " achievement");
+            return;
         }
         UserAchievement userAchievement = new UserAchievement();
         userAchievement.setAchievement(achievement);
