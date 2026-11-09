@@ -1,5 +1,6 @@
 package quizz.service;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import quizz.model.Achievement;
 import quizz.model.AchievementType;
 import quizz.model.AnswerAttempt;
 import quizz.model.Difficulty;
+import quizz.model.Question;
 import quizz.model.QuizAttempt;
 import quizz.model.Status;
 import quizz.model.User;
@@ -30,6 +32,7 @@ public class AchievementEvaluatorImpl implements AchievementEvaluator {
     private final AnswerAttemptRepository answerAttemptRepository;
 
     @Override
+    @Transactional
     public void checkFirstQuizAchievement(String email) {
         User user = findByEmail(email);
         if (user.getTotalGamesPlayed() == 1) {
@@ -39,6 +42,7 @@ public class AchievementEvaluatorImpl implements AchievementEvaluator {
     }
 
     @Override
+    @Transactional
     public void checkPerfectScoreAchievement(String email, int score) {
         if (score == 10) {
             Achievement achievement = findByAchievementType(AchievementType.PERFECT_SCORE);
@@ -47,6 +51,7 @@ public class AchievementEvaluatorImpl implements AchievementEvaluator {
     }
 
     @Override
+    @Transactional
     public void checkFiveCategoriesAchievement(String email) {
         User user = findByEmail(email);
         Achievement achievement = findByAchievementType(AchievementType.CURIOUS_MIND);
@@ -60,6 +65,7 @@ public class AchievementEvaluatorImpl implements AchievementEvaluator {
     }
 
     @Override
+    @Transactional
     public void checkEightOutOfTenAchievement(String email, int score) {
         if (score >= 8) {
             Achievement achievement = findByAchievementType(AchievementType.BRAIN_POWER);
@@ -68,32 +74,35 @@ public class AchievementEvaluatorImpl implements AchievementEvaluator {
     }
 
     @Override
+    @Transactional
     public void checkFiveQuizzesOnHardLevelAchievement(String email) {
         User user = findByEmail(email);
         Achievement achievement = findByAchievementType(AchievementType.HARD_MODE_HERO);
-        List<QuizAttempt> byUserIdAndQuizDifficulty = quizAttemptRepository
-                .findByUserIdAndQuizDifficultyAndStatus(
+        int sum = quizAttemptRepository
+                .countByUserIdAndQuizDifficultyAndStatus(
                         user.getId(), Difficulty.HARD, Status.FINISHED);
 
-        if (byUserIdAndQuizDifficulty.size() >= 5) {
+        if (sum >= 5) {
             userAchievementService.unlockAchievement(achievement.getId(), email);
         }
     }
 
     @Override
+    @Transactional
     public void checkFiftyQuizzesAchievement(String email) {
         User user = findByEmail(email);
         Achievement achievement = findByAchievementType(AchievementType.QUIZ_VETERAN);
 
-        List<QuizAttempt> allQuizzes = quizAttemptRepository.findByUserIdAndStatus(
+        int sum = quizAttemptRepository.countByUserIdAndStatus(
                 user.getId(), Status.FINISHED);
 
-        if (allQuizzes.size() >= 50) {
+        if (sum >= 50) {
             userAchievementService.unlockAchievement(achievement.getId(), email);
         }
     }
 
     @Override
+    @Transactional
     public void checkPlayThreeDaysInARow(String email) {
         User user = findByEmail(email);
         Achievement achievement = findByAchievementType(AchievementType.ON_FIRE);
@@ -104,13 +113,23 @@ public class AchievementEvaluatorImpl implements AchievementEvaluator {
     }
 
     @Override
+    @Transactional
     public void checkAnswerFiveQuestionsCorrectlyInARow(String email) {
         User user = findByEmail(email);
-        List<AnswerAttempt> lastFiveAnswers = answerAttemptRepository
-                .findTop5ByQuizAttempt_User_IdOrderByAnsweredAtDescIdDesc(user.getId());
+
+        QuizAttempt lastQuiz = quizAttemptRepository
+                .findTopByUserIdAndStatusOrderByFinishedAtDesc(user.getId(), Status.FINISHED);
+
+        if (lastQuiz == null) {
+            return;
+        }
+
         Achievement achievement = findByAchievementType(AchievementType.SHARPSHOOTER);
 
-        if (lastFiveAnswers.size() == 5 && lastFiveAnswers.stream()
+        List<AnswerAttempt> last5 = answerAttemptRepository
+                .findTop5ByQuizAttemptIdOrderByAnsweredAtAsc(lastQuiz.getId());
+
+        if (last5.size() == 5 && last5.stream()
                 .allMatch(AnswerAttempt::isCorrectAnswer)) {
             userAchievementService.unlockAchievement(achievement.getId(), email);
         }

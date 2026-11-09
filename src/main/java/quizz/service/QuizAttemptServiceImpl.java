@@ -218,6 +218,7 @@ public class QuizAttemptServiceImpl implements QuizAttemptService {
             achievementEvaluator.checkFiveQuizzesOnHardLevelAchievement(username);
             achievementEvaluator.checkFiftyQuizzesAchievement(username);
             achievementEvaluator.checkPlayThreeDaysInARow(username);
+            achievementEvaluator.checkAnswerFiveQuestionsCorrectlyInARow(username);
             achievementEvaluator.checkEightOutOfTenAchievement(username, correctAnswers);
             achievementEvaluator.checkPerfectScoreAchievement(username, correctAnswers);
         }
