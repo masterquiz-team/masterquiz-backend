@@ -2,6 +2,7 @@ package quizz.exception;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+@Slf4j
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -29,7 +31,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 status.value(),
                 new ArrayList<>(ex.getBindingResult().getAllErrors().stream()
                         .map(ObjectError::getDefaultMessage).toList()));
-
+        log.warn("Invalid argument: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, status);
     }
 
@@ -39,6 +41,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.UNAUTHORIZED.value());
+        log.warn("Login exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
 
@@ -48,6 +51,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.CONFLICT.value());
+        log.warn("Register exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
@@ -57,6 +61,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.CONFLICT.value());
+        log.warn("Entity found exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
@@ -66,6 +71,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.NOT_FOUND.value());
+        log.warn("Entity not found exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
@@ -76,6 +82,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value());
+        log.warn("Question answer counter exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -86,6 +93,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value());
+        log.warn("Answer limit exceeded exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -96,6 +104,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value());
+        log.warn("Correct answer already exist exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -106,6 +115,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value());
+        log.warn("Invalid quiz question count exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -116,6 +126,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.FORBIDDEN.value());
+        log.warn("Unauthorized access exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
     }
 
@@ -126,6 +137,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value());
+        log.warn("Invalid quiz attempt state exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -136,6 +148,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.CONFLICT.value());
+        log.warn("Question already answered exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
@@ -146,6 +159,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Instant.now(),
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST.value());
+        log.warn("Illegal argument exception: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 }
