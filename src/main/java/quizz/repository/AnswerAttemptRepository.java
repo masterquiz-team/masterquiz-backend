@@ -14,4 +14,6 @@ public interface AnswerAttemptRepository extends JpaRepository<AnswerAttempt, Lo
 
     List<AnswerAttempt> findTop5ByQuizAttempt_User_IdOrderByAnsweredAtDescIdDesc(
             Long userId);
+
+    int countByQuizAttemptIdAndCorrectAnswerTrue(Long quizAttemptId);
 }

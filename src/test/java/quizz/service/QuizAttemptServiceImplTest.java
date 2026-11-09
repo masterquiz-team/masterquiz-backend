@@ -35,6 +35,7 @@ import quizz.model.QuizAttempt;
 import quizz.model.Role;
 import quizz.model.Status;
 import quizz.model.User;
+import quizz.repository.AnswerAttemptRepository;
 import quizz.repository.CategoryRepository;
 import quizz.repository.GamesByCategoryResultRepository;
 import quizz.repository.GuestUserRepository;
@@ -48,6 +49,7 @@ import quizz.service.interfaces.AchievementEvaluator;
 public class QuizAttemptServiceImplTest {
     private static final Long ID = 1L;
     private static final String USERNAME = "email@email.com";
+    private static final int CORRECT_ANSWERS = 1;
 
     @Mock
     private QuizAttemptRepository quizAttemptRepository;
@@ -67,6 +69,8 @@ public class QuizAttemptServiceImplTest {
     private GuestUserRepository guestUserRepository;
     @Mock
     private AchievementEvaluator achievementEvaluator;
+    @Mock
+    private AnswerAttemptRepository answerAttemptRepository;
     @InjectMocks
     private QuizAttemptServiceImpl quizAttemptService;
 
@@ -505,6 +509,8 @@ public class QuizAttemptServiceImplTest {
         when(quizAttemptRepository.findById(ID)).thenReturn(quizAttempt);
         when(userRepository.findByEmail(USERNAME)).thenReturn(user);
         when(guestUserRepository.findByNickname(USERNAME)).thenReturn(Optional.empty());
+        when(answerAttemptRepository.countByQuizAttemptIdAndCorrectAnswerTrue(ID))
+                .thenReturn(CORRECT_ANSWERS);
         when(gamesByCategoryResultRepository.findByCategoryIdAndUserId(
                 category.getId(), user.get().getId())).thenReturn(result);
         doNothing().when(achievementEvaluator).checkFirstQuizAchievement(USERNAME);
