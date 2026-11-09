@@ -60,8 +60,7 @@ public class UserAchievementServiceImpl implements UserAchievementService {
 
         if (userAchievementRepository.findByUserIdAndAchievementId(user.getId(), achievementId)
                 .isPresent()) {
-            throw new EntityFoundException("User already has: "
-                    + achievement.getTitle() + " achievement");
+            return;
         }
         UserAchievement userAchievement = new UserAchievement();
         userAchievement.setAchievement(achievement);
