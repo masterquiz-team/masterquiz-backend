@@ -22,11 +22,9 @@ import quizz.model.Status;
 import quizz.model.User;
 import quizz.repository.AnswerAttemptRepository;
 import quizz.repository.AnswerRepository;
-import quizz.repository.GamesByCategoryResultRepository;
 import quizz.repository.GuestUserRepository;
 import quizz.repository.QuizAttemptRepository;
 import quizz.repository.UserRepository;
-import quizz.service.interfaces.AchievementEvaluator;
 import quizz.service.interfaces.AnswerAttemptService;
 
 @Service
@@ -37,9 +35,7 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
     private final QuizAttemptRepository quizAttemptRepository;
     private final AnswerRepository answerRepository;
     private final AnswerAttemptMapper answerAttemptMapper;
-    private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
     private final GuestUserRepository guestUserRepository;
-    private final AchievementEvaluator achievementEvaluator;
 
     @Override
     @Transactional
@@ -80,10 +76,6 @@ public class AnswerAttemptServiceImpl implements AnswerAttemptService {
         answerAttempt.setAnsweredAt(LocalDateTime.now());
         answerAttempt.setCorrectAnswer(answer.isCorrect());
         answerAttempt.setQuizAttempt(quizAttempt);
-
-        if (user.isPresent()) {
-            achievementEvaluator.checkAnswerFiveQuestionsCorrectlyInARow(username);
-        }
 
         Question question = quizAttempt.getQuiz().getListOfQuestions().stream()
                 .filter(q -> answer.getQuestion().getId().equals(q.getId()))
