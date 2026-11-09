@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import quizz.dto.userachievement.UserAchievementDto;
-import quizz.exception.EntityFoundException;
 import quizz.exception.EntityNotFoundException;
 import quizz.exception.UnauthorizedAccessException;
 import quizz.mapper.UserAchievementMapper;
