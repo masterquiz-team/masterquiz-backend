@@ -38,9 +38,9 @@ databaseChangeLog:
               - column:
                   name: games_played
                   type: INT
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false
-                    defaultValueNumeric: 0
 
         - addForeignKeyConstraint:
             baseTableName: games_by_category_result
