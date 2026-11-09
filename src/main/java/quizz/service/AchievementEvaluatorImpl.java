@@ -27,7 +27,7 @@ public class AchievementEvaluatorImpl implements AchievementEvaluator {
     private final UserRepository userRepository;
     private final GamesByCategoryResultRepository gamesByCategoryResultRepository;
     private final QuizAttemptRepository quizAttemptRepository;
-    private AnswerAttemptRepository answerAttemptRepository;
+    private final AnswerAttemptRepository answerAttemptRepository;
 
     @Override
     public void checkFirstQuizAchievement(String email) {
